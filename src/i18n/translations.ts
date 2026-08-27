@@ -249,6 +249,7 @@ interface Translation {
     signedAtLabel: string;
     signatureModalTitle: string;
     signaturePlaceholder: string;
+    signatureInputPlaceholder: string;
     clearButton: string;
     completeSignButton: string;
     cancelButton: string;
@@ -610,7 +611,8 @@ const ja: Translation = {
     unsignedStatus: '未署名',
     signedAtLabel: '署名日時',
     signatureModalTitle: '署名',
-    signaturePlaceholder: '枠内に指またはマウスで署名してください',
+    signaturePlaceholder: '以下にお名前を入力し、署名としてください',
+    signatureInputPlaceholder: 'お名前',
     clearButton: 'クリア',
     completeSignButton: '署名して完了',
     cancelButton: 'キャンセル',
@@ -976,7 +978,8 @@ const en: Translation = {
     unsignedStatus: 'Not signed',
     signedAtLabel: 'Signed at',
     signatureModalTitle: 'Signature',
-    signaturePlaceholder: 'Sign within the box using your finger or mouse',
+    signaturePlaceholder: 'Type your name below as your signature',
+    signatureInputPlaceholder: 'Your name',
     clearButton: 'Clear',
     completeSignButton: 'Sign & Complete',
     cancelButton: 'Cancel',

@@ -111,8 +111,8 @@ export default function HomeScreen({
           : t.seismic.scaleLabel(effectiveInfo.scale);
 
   return (
-    <div className="flex flex-1 flex-col px-5 pb-6 pt-2">
-      <header className="mb-6 flex items-center justify-between gap-2">
+    <div className="flex flex-1 flex-col px-5 pb-4 pt-1">
+      <header className="mb-4 flex items-center justify-between gap-2">
         <h1 className="text-2xl font-bold leading-tight text-neutral-900">
           {t.home.appTitle}
         </h1>
@@ -127,7 +127,7 @@ export default function HomeScreen({
 
       {/* この建物の確認が既に済んでいるかを示すデモ用の記録カード */}
       <section
-        className={`mb-4 rounded-2xl border p-4 ${
+        className={`mb-3 rounded-2xl border p-3 ${
           priorCheck
             ? 'border-indigo-200 bg-indigo-50/50'
             : 'border-neutral-200 bg-neutral-50'
@@ -157,14 +157,14 @@ export default function HomeScreen({
       </section>
 
       {/* 診断前・診断中でも自己責任で建物に入場する人の記録 */}
-      <section className="mb-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+      <section className="mb-3 rounded-2xl border border-neutral-200 bg-neutral-50 p-3">
         <p className="mb-1 text-sm font-bold text-neutral-500">{t.selfEntry.sectionTitle}</p>
-        <p className="mb-3 text-sm text-neutral-500">{t.selfEntry.description}</p>
+        <p className="mb-2 text-sm text-neutral-500">{t.selfEntry.description}</p>
 
         {selfEntries.length === 0 ? (
-          <p className="mb-3 text-sm text-neutral-500">{t.selfEntry.emptyText}</p>
+          <p className="mb-2 text-sm text-neutral-500">{t.selfEntry.emptyText}</p>
         ) : (
-          <ul className="mb-3 space-y-2">
+          <ul className="mb-2 space-y-2">
             {selfEntries.map((entry) => (
               <li
                 key={entry.id}
@@ -183,11 +183,13 @@ export default function HomeScreen({
                   </button>
                 </div>
                 <div className="flex items-center gap-3">
-                  <img
-                    src={entry.signatureDataUrl}
-                    alt={t.selfEntry.signedBadge}
-                    className="h-12 w-20 shrink-0 rounded-lg border border-neutral-200 bg-white object-contain"
-                  />
+                  <p
+                    className="w-20 shrink-0 truncate rounded-lg border border-neutral-200 bg-white px-2 py-1 text-center text-base italic text-neutral-900"
+                    style={{ fontFamily: "'Noto Serif JP', 'Yu Mincho', serif" }}
+                    title={entry.signatureText}
+                  >
+                    {entry.signatureText}
+                  </p>
                   <dl className="min-w-0 flex-1 space-y-0.5 text-sm">
                     <div className="flex items-center justify-between gap-2">
                       <dt className="shrink-0 text-neutral-500">{t.selfEntry.roomLabel}</dt>
@@ -236,7 +238,7 @@ export default function HomeScreen({
       )}
 
       {/* 周辺の震度情報：建物・現場情報とは別に、最初の画面に表示してよい項目 */}
-      <section className="mb-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+      <section className="mb-3 rounded-2xl border border-neutral-200 bg-neutral-50 p-3">
         <p className="mb-2 text-sm font-bold text-neutral-500">{t.seismic.sectionTitle}</p>
         <div className="flex items-center justify-between text-base">
           <span
@@ -260,7 +262,7 @@ export default function HomeScreen({
           </span>
         </div>
 
-        <div className="mt-3 border-t border-dashed border-neutral-200 pt-3">
+        <div className="mt-2 border-t border-dashed border-neutral-200 pt-2">
           {manualMode && (
             <div className="space-y-3">
               <div>
@@ -306,7 +308,7 @@ export default function HomeScreen({
               </div>
             </div>
           )}
-          <div className="mt-3 flex items-center gap-4">
+          <div className="mt-2 flex items-center gap-4">
             <button
               type="button"
               onClick={() => setManualMode((v) => !v)}
@@ -318,11 +320,11 @@ export default function HomeScreen({
         </div>
       </section>
 
-      <p className="mb-6 rounded-xl bg-neutral-100 p-3 text-sm leading-relaxed text-neutral-500">
+      <p className="mb-3 rounded-xl bg-neutral-100 p-3 text-sm leading-relaxed text-neutral-500">
         {t.home.disclaimer}
       </p>
 
-      <div className="mt-auto pt-4">
+      <div className="mt-auto pt-3">
         <BigButton onClick={() => setShowStartModal(true)} className="text-xl">
           {t.home.startButton}
         </BigButton>

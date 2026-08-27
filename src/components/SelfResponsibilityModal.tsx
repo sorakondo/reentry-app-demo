@@ -3,7 +3,7 @@ import type { SelfResponsibilityEntry } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
 import { generateEntryId } from '../logic/expertReport';
 import BigButton from './BigButton';
-import SignaturePad from './SignaturePad';
+import SignatureInput from './SignatureInput';
 
 interface SelfResponsibilityModalProps {
   onSave: (entry: SelfResponsibilityEntry) => void;
@@ -15,7 +15,7 @@ type Step = 'form' | 'signature';
 /**
  * 診断前・診断中でも自己責任で建物に入場する人の記録を追加するためのポップアップ。
  * 1. 氏名・行き先の部屋を入力
- * 2. 手書き署名（SignaturePadを再利用）
+ * 2. 署名（SignatureInputを再利用、手書きではなく氏名の文字入力）
  * 署名が完了した瞬間の時刻を「入室時刻」として自動的に記録する。
  */
 export default function SelfResponsibilityModal({
@@ -35,18 +35,18 @@ export default function SelfResponsibilityModal({
     setStep('signature');
   }
 
-  function handleSignatureComplete(dataUrl: string) {
+  function handleSignatureComplete(text: string) {
     onSave({
       id: generateEntryId(),
       name: name.trim(),
       room: room.trim(),
       enteredAt: new Date(),
-      signatureDataUrl: dataUrl,
+      signatureText: text,
     });
   }
 
   if (step === 'signature') {
-    return <SignaturePad onComplete={handleSignatureComplete} onClose={onClose} />;
+    return <SignatureInput onComplete={handleSignatureComplete} onClose={onClose} />;
   }
 
   return (

@@ -102,17 +102,17 @@ export default function PhoneFrame({
             paddingBottom: 'env(safe-area-inset-bottom)',
           }}
         >
-          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 px-4 pt-3">
-            <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-1.5 px-3 pt-3">
+            <div className="flex flex-wrap items-center gap-1">
               <div
-                className={`flex shrink items-center gap-1 whitespace-nowrap rounded-full border px-2.5 py-1 text-sm font-bold ${alarmMeta.className}`}
+                className={`flex shrink items-center gap-1 whitespace-nowrap rounded-full border px-2 py-1 text-sm font-bold ${alarmMeta.className}`}
                 aria-label={`${t.home.gasAlarmSectionTitle}: ${alarmMeta.text}`}
               >
                 <span aria-hidden="true">{alarmMeta.emoji}</span>
                 <span>{alarmMeta.text}</span>
               </div>
               <div
-                className={`flex shrink items-center gap-1 whitespace-nowrap rounded-full border px-2.5 py-1 text-sm font-bold ${entranceMeta.className}`}
+                className={`flex shrink items-center gap-1 whitespace-nowrap rounded-full border px-2 py-1 text-sm font-bold ${entranceMeta.className}`}
                 aria-label={`${t.viewSwitcher.entranceTab}: ${entranceMeta.text}`}
               >
                 <span aria-hidden="true">{entranceMeta.emoji}</span>
@@ -122,7 +122,7 @@ export default function PhoneFrame({
             <button
               type="button"
               onClick={toggleLang}
-              className="tap-target shrink-0 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-600 active:bg-neutral-100"
+              className="tap-target shrink-0 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-3 text-sm font-bold text-neutral-600 active:bg-neutral-100"
               aria-label="Switch language / 言語を切り替え"
             >
               {t.common.langToggleLabel}

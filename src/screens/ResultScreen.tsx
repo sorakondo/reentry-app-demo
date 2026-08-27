@@ -3,7 +3,7 @@ import type { JudgementDetail, SavedResult, SignatureState } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
 import { formatDateTimeJP } from '../logic/expertReport';
 import BigButton from '../components/BigButton';
-import SignaturePad from '../components/SignaturePad';
+import SignatureInput from '../components/SignatureInput';
 
 interface ResultScreenProps {
   judgement: JudgementDetail;
@@ -16,7 +16,7 @@ interface ResultScreenProps {
 const INITIAL_SIGNATURE: SignatureState = {
   signed: false,
   signedAt: null,
-  dataUrl: null,
+  text: null,
 };
 
 export default function ResultScreen({
@@ -60,15 +60,16 @@ export default function ResultScreen({
         </div>
         <p className="mb-3 text-sm text-neutral-600">{t.expertCall.signatureSectionDesc}</p>
 
-        {signature.signed && signature.dataUrl && (
-          <div className="mb-3 flex items-center gap-3">
-            <img
-              src={signature.dataUrl}
-              alt={t.expertCall.signedStatus}
-              className="h-16 w-28 rounded-lg border border-neutral-200 bg-white object-contain"
-            />
+        {signature.signed && signature.text && (
+          <div className="mb-3 flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3">
+            <p
+              className="flex-1 truncate text-2xl italic text-neutral-900"
+              style={{ fontFamily: "'Noto Serif JP', 'Yu Mincho', serif" }}
+            >
+              {signature.text}
+            </p>
             {signature.signedAt && (
-              <p className="text-xs text-neutral-400">
+              <p className="shrink-0 text-xs text-neutral-400">
                 {t.expertCall.signedAtLabel}：{formatDateTimeJP(signature.signedAt, lang)}
               </p>
             )}
@@ -85,8 +86,8 @@ export default function ResultScreen({
       </section>
 
       {showSignaturePad && (
-        <SignaturePad
-          onComplete={(dataUrl) => setSignature({ signed: true, signedAt: new Date(), dataUrl })}
+        <SignatureInput
+          onComplete={(text) => setSignature({ signed: true, signedAt: new Date(), text })}
           onClose={() => setShowSignaturePad(false)}
         />
       )}
