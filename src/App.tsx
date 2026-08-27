@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Answer, AnswerValue, Screen } from './types';
-import { CHECKLIST_QUESTIONS } from './data/checklist';
+import { CHECKLIST_QUESTIONS, getDynamicQuestions } from './data/checklist';
 import { judge } from './logic/judgement';
 import { useGasAlarm } from './logic/useGasAlarm';
 import { generateCaseNumber } from './logic/expertReport';
@@ -29,7 +29,7 @@ function AppContent() {
   const { state: gasAlarm, toggleStatus, setNormal } = useGasAlarm();
 
   const judgement = useMemo(
-    () => judge(answers, gasAlarm),
+    () => judge(answers, gasAlarm, getDynamicQuestions(answers)),
     // gasAlarm.lastUpdated changes every few seconds; only status matters for judgement
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [answers, gasAlarm.status],
@@ -42,6 +42,7 @@ function AppContent() {
   }
 
   function handleStart() {
+    setAnswers(createInitialAnswers());
     setCheckedAt(new Date());
     setScreen('checklist');
   }
@@ -75,7 +76,6 @@ function AppContent() {
 
       {screen === 'checklist' && (
         <ChecklistScreen
-          questions={CHECKLIST_QUESTIONS}
           answers={answers}
           onAnswerChange={handleAnswerChange}
           onFinish={handleFinishChecklist}

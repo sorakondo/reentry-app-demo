@@ -37,7 +37,7 @@ interface Translation {
     relativeMinutesAgo: (n: number) => string;
   };
   checklist: {
-    progress: (index: number, total: number) => string;
+    checkLabel: string;
     importantBadge: string;
     answerYes: string;
     answerYesHint: string;
@@ -54,11 +54,16 @@ interface Translation {
   };
   questions: Record<QuestionId, QuestionText>;
   result: {
-    titleSafe: string;
-    titleUnsafe: string;
+    titleRoutine: string;
+    titleTargeted: string;
     titleExpert: string;
-    descSafe: string;
+    titleHold: string;
+    descRoutine: string;
+    descTargeted: string;
     descExpert: string;
+    descHold: string;
+    targetedSectionTitle: string;
+    targetedItemSuffix: string;
     dangerSectionTitle: string;
     gasAlarmReasonText: string;
     unknownSectionTitle: string;
@@ -131,7 +136,7 @@ const ja: Translation = {
     relativeMinutesAgo: (n) => `${n}分前`,
   },
   checklist: {
-    progress: (index, total) => `${index} / ${total}`,
+    checkLabel: '確認項目',
     importantBadge: '重要項目',
     answerYes: 'はい',
     answerYesHint: '危険なし',
@@ -162,36 +167,79 @@ const ja: Translation = {
       unknownBaseText:
         '柱・梁について、損傷の有無や程度を現場で判断できませんでした。',
     },
-    q3_ceiling: {
-      text: '天井や壁に大きな落下・崩落の危険がありませんか？',
-      shortLabel: '天井・壁の落下危険',
-      dangerDescription: '天井や壁の落下・崩落の危険がある可能性があります',
-      unknownBaseText:
-        '天井・壁の落下・崩落の危険について、現場で安全性を判断できませんでした。',
+    q3_adjacent: {
+      text: '隣接建物・地盤に危険な変状がありませんか？',
+      shortLabel: '隣接建物・地盤の危険',
+      dangerDescription: '隣接建物・地盤に危険な変状がある可能性があります',
+      unknownBaseText: '隣接建物・地盤の状態を現場で判断できませんでした。',
     },
-    q4_fire: {
-      text: '建物内に火災、煙、浸水などの明らかな危険がありませんか？',
-      shortLabel: '火災・煙・浸水',
-      dangerDescription: '火災・煙・浸水などの危険がある可能性があります',
-      unknownBaseText:
-        '火災・煙・浸水などの危険について、現場で安全性を判断できませんでした。',
+    q4_monitoring: {
+      text: '構造モニタリングが正常で、最新データを受信していますか？',
+      shortLabel: '構造モニタリング',
+      dangerDescription: '構造モニタリングに異常がある可能性があります',
+      unknownBaseText: '構造モニタリングの状態を現場で判断できませんでした。',
     },
-    q5_gas: {
-      text: '建物内または建物周辺からガス臭がしませんか？',
-      shortLabel: 'ガス臭の有無',
-      dangerDescription:
-        'ガス臭が確認されており、ガス漏れの危険がある可能性があります',
-      unknownBaseText:
-        'ガス臭の有無について、現場で安全性を判断できませんでした。ガスに関する項目のため特に慎重な確認が必要です。',
+    q5_ceiling: {
+      text: '天井に落下・崩落の兆候がありませんか？',
+      shortLabel: '天井の損傷',
+      dangerDescription: '天井に落下・崩落の危険がある可能性があります',
+      unknownBaseText: '天井の落下・崩落の危険を現場で判断できませんでした。',
+    },
+    q6_glass: {
+      text: 'ガラスやその他の落下物による危険がありませんか？',
+      shortLabel: 'ガラス・落下物の危険',
+      dangerDescription: 'ガラス・落下物による危険がある可能性があります',
+      unknownBaseText: 'ガラス・落下物の危険を現場で判断できませんでした。',
+    },
+    q7_exit: {
+      text: '非常階段・出口を安全に利用できますか？',
+      shortLabel: '非常階段・出口',
+      dangerDescription: '非常階段・出口を利用できない可能性があります',
+      unknownBaseText: '非常階段・出口の利用可否を現場で判断できませんでした。',
+    },
+    q8_gas: {
+      text: 'ガスの状態が正常で、ガス臭や警報がありませんか？',
+      shortLabel: 'ガスの状態',
+      dangerDescription: 'ガス漏れの危険がある可能性があります',
+      unknownBaseText: 'ガスの状態を現場で判断できませんでした。特に慎重な確認が必要です。',
+    },
+    q9_fire: {
+      text: '火災警報・消火設備に異常がありませんか？',
+      shortLabel: '火災警報・消防設備',
+      dangerDescription: '火災警報・消防設備に異常がある可能性があります',
+      unknownBaseText: '火災警報・消防設備の状態を現場で判断できませんでした。',
+    },
+    q10_elevator: {
+      text: 'エレベーターの停止状況を把握し、閉じ込められた人がいませんか？',
+      shortLabel: 'エレベーター・閉じ込め',
+      dangerDescription: 'エレベーターの停止や閉じ込めの危険があります',
+      unknownBaseText: 'エレベーターの停止・閉じ込め状況を現場で判断できませんでした。',
+    },
+    q11_power: {
+      text: '電力の状態が把握でき、通電による危険がありませんか？',
+      shortLabel: '電力の状態',
+      dangerDescription: '電力の停止・通電による追加確認が必要です',
+      unknownBaseText: '電力の状態を現場で判断できませんでした。',
+    },
+    q12_missing_data: {
+      text: '安全判定に必要な重要データがそろっていますか？',
+      shortLabel: '重要データの不足',
+      dangerDescription: '安全判定に必要な重要データが不足しています',
+      unknownBaseText: '安全判定に必要な重要データの有無を判断できませんでした。',
     },
   },
   result: {
-    titleSafe: '再入場可能',
-    titleUnsafe: '再入場しないでください',
-    titleExpert: '専門家による確認が必要です',
-    descSafe: '今回の確認項目では、明らかな危険は確認されませんでした。',
-    descExpert: '現場では安全性を確認できなかった項目があります。',
-    dangerSectionTitle: '確認された危険',
+    titleRoutine: 'Routine Check',
+    titleTargeted: 'Targeted Check',
+    titleExpert: 'Expert Review',
+    titleHold: 'HOLD',
+    descRoutine: '今回の関連項目はすべて正常でした。',
+    descTargeted: '一部の設備・内装項目に追加確認が必要です。',
+    descExpert: '構造・重要項目を現場だけでは判断できません。',
+    descHold: '重大な危険または安全判定を止める状態を検知しました。',
+    targetedSectionTitle: '追加確認が必要な項目',
+    targetedItemSuffix: '：追加確認',
+    dangerSectionTitle: 'HOLDの理由',
     gasAlarmReasonText: 'ガス漏れ警報器が警報を検知しています',
     unknownSectionTitle: '判断できなかった項目',
     unknownItemSuffix: '：判断できない',
@@ -268,7 +316,7 @@ const en: Translation = {
     relativeMinutesAgo: (n) => `${n}m ago`,
   },
   checklist: {
-    progress: (index, total) => `${index} / ${total}`,
+    checkLabel: 'Check item',
     importantBadge: 'Important',
     answerYes: 'Yes',
     answerYesHint: 'No danger',
@@ -299,36 +347,79 @@ const en: Translation = {
       unknownBaseText:
         'Whether the columns or beams are damaged, and how severely, could not be judged on site.',
     },
-    q3_ceiling: {
-      text: 'Is there NO major risk of the ceiling or walls collapsing or falling?',
-      shortLabel: 'Ceiling / wall collapse risk',
-      dangerDescription: 'There may be a risk of the ceiling or walls collapsing or falling',
-      unknownBaseText:
-        'The risk of the ceiling or walls collapsing or falling could not be judged on site.',
+    q3_adjacent: {
+      text: 'Are there NO dangerous changes to adjacent buildings or the ground?',
+      shortLabel: 'Adjacent / ground hazard',
+      dangerDescription: 'Adjacent buildings or the ground may have a dangerous change',
+      unknownBaseText: 'The condition of adjacent buildings or the ground could not be judged on site.',
     },
-    q4_fire: {
-      text: 'Is there NO obvious danger such as fire, smoke, or flooding inside the building?',
-      shortLabel: 'Fire / smoke / flooding',
-      dangerDescription: 'There may be danger from fire, smoke, or flooding',
-      unknownBaseText:
-        'Whether there is danger from fire, smoke, or flooding could not be judged on site.',
+    q4_monitoring: {
+      text: 'Is structural monitoring normal, with the latest data received?',
+      shortLabel: 'Structural monitoring',
+      dangerDescription: 'Structural monitoring may be abnormal',
+      unknownBaseText: 'The status of structural monitoring could not be judged on site.',
     },
-    q5_gas: {
-      text: 'Is there NO smell of gas in or around the building?',
-      shortLabel: 'Gas odor',
-      dangerDescription:
-        'A gas odor has been detected, and there may be a risk of a gas leak',
-      unknownBaseText:
-        'Whether there is a gas odor could not be judged on site. Since this concerns gas, extra caution is needed.',
+    q5_ceiling: {
+      text: 'Are there NO signs of ceiling damage or collapse?',
+      shortLabel: 'Ceiling damage',
+      dangerDescription: 'There may be a risk of ceiling damage or collapse',
+      unknownBaseText: 'The risk of ceiling damage or collapse could not be judged on site.',
+    },
+    q6_glass: {
+      text: 'Is there NO hazard from glass or other falling objects?',
+      shortLabel: 'Glass / falling objects',
+      dangerDescription: 'There may be a glass or falling-object hazard',
+      unknownBaseText: 'The glass or falling-object hazard could not be judged on site.',
+    },
+    q7_exit: {
+      text: 'Are emergency stairs and exits safe to use?',
+      shortLabel: 'Emergency stairs / exits',
+      dangerDescription: 'Emergency stairs or exits may not be usable',
+      unknownBaseText: 'Whether emergency stairs or exits are usable could not be judged on site.',
+    },
+    q8_gas: {
+      text: 'Is the gas status normal, with no odor or alarm?',
+      shortLabel: 'Gas status',
+      dangerDescription: 'There may be a gas leak hazard',
+      unknownBaseText: 'The gas status could not be judged on site. Extra caution is needed.',
+    },
+    q9_fire: {
+      text: 'Are fire alarms and fire-protection systems operating normally?',
+      shortLabel: 'Fire alarm / fire protection',
+      dangerDescription: 'Fire alarms or fire-protection systems may be abnormal',
+      unknownBaseText: 'The status of fire alarms or fire-protection systems could not be judged on site.',
+    },
+    q10_elevator: {
+      text: 'Is the elevator status known, with no person trapped inside?',
+      shortLabel: 'Elevator / trapped person',
+      dangerDescription: 'There may be an elevator outage or trapped person',
+      unknownBaseText: 'The elevator outage or trapped-person status could not be judged on site.',
+    },
+    q11_power: {
+      text: 'Is the power status known, with no electrical hazard?',
+      shortLabel: 'Power status',
+      dangerDescription: 'Additional checks are needed for power or electrical hazards',
+      unknownBaseText: 'The power status could not be judged on site.',
+    },
+    q12_missing_data: {
+      text: 'Is all critical data needed for a safety decision available?',
+      shortLabel: 'Missing critical data',
+      dangerDescription: 'Critical data needed for a safety decision is missing',
+      unknownBaseText: 'The availability of critical safety data could not be judged on site.',
     },
   },
   result: {
-    titleSafe: 'Re-Entry Allowed',
-    titleUnsafe: 'Do Not Re-Enter',
-    titleExpert: 'Expert Review Required',
-    descSafe: 'No obvious danger was found in this check.',
-    descExpert: 'Some items could not be confirmed safe on site.',
-    dangerSectionTitle: 'Hazards found',
+    titleRoutine: 'Routine Check',
+    titleTargeted: 'Targeted Check',
+    titleExpert: 'Expert Review',
+    titleHold: 'HOLD',
+    descRoutine: 'All relevant checks were normal.',
+    descTargeted: 'A focused follow-up is needed for one or more systems or interior items.',
+    descExpert: 'Structural or critical items cannot be judged on site alone.',
+    descHold: 'A serious hazard or a stop condition for the safety decision was detected.',
+    targetedSectionTitle: 'Items needing a focused follow-up',
+    targetedItemSuffix: ': follow-up needed',
+    dangerSectionTitle: 'Why HOLD',
     gasAlarmReasonText: 'The gas leak detector has detected an alarm',
     unknownSectionTitle: 'Items that could not be judged',
     unknownItemSuffix: ": Can't tell",

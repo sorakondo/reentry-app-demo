@@ -12,15 +12,23 @@ export interface Answer {
 export type QuestionId =
   | 'q1_tilt'
   | 'q2_crack'
-  | 'q3_ceiling'
-  | 'q4_fire'
-  | 'q5_gas';
+  | 'q3_adjacent'
+  | 'q4_monitoring'
+  | 'q5_ceiling'
+  | 'q6_glass'
+  | 'q7_exit'
+  | 'q8_gas'
+  | 'q9_fire'
+  | 'q10_elevator'
+  | 'q11_power'
+  | 'q12_missing_data';
 
 // チェックリストの質問定義（表示文言は i18n/translations.ts 側で言語ごとに管理する）
 export interface ChecklistQuestion {
   id: QuestionId;
   order: number;
-  // ガス臭に関する項目かどうか（特に重要な項目として扱う）
+  // ガス・構造など、異常時にHOLDへ直結する項目かどうか
+  isCritical?: boolean;
   isGasRelated?: boolean;
 }
 
@@ -33,8 +41,8 @@ export interface GasAlarmState {
   lastUpdated: Date;
 }
 
-// 最終判定の3種類
-export type JudgementResult = 'safe' | 'unsafe' | 'expert_needed';
+// 最終判定の4種類
+export type JudgementResult = 'routine' | 'targeted' | 'expert_review' | 'hold';
 
 // 「再入場しない」理由のキー（'gasAlarm' またはガス警報以外の質問ID）
 export type DangerReasonKey = 'gasAlarm' | QuestionId;
@@ -46,6 +54,8 @@ export interface JudgementDetail {
   gasAlarmTriggered: boolean;
   // 「専門家による確認が必要」の対象項目
   unknownItems: { questionId: QuestionId; comment: string }[];
+  // 追加確認が必要な対象項目
+  targetedItems: { questionId: QuestionId; value: Exclude<AnswerValue, 'yes'> }[];
 }
 
 // アプリの画面

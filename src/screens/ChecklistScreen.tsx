@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import type { Answer, AnswerValue, ChecklistQuestion } from '../types';
+import { useMemo, useState } from 'react';
+import type { Answer, AnswerValue } from '../types';
+import { getDynamicQuestions } from '../data/checklist';
 import { useLanguage } from '../i18n/LanguageContext';
 import BigButton from '../components/BigButton';
 
 interface ChecklistScreenProps {
-  questions: ChecklistQuestion[];
   answers: Answer[];
   onAnswerChange: (questionId: string, value: AnswerValue, comment: string) => void;
   onFinish: () => void;
@@ -12,7 +12,6 @@ interface ChecklistScreenProps {
 }
 
 export default function ChecklistScreen({
-  questions,
   answers,
   onAnswerChange,
   onFinish,
@@ -20,23 +19,17 @@ export default function ChecklistScreen({
 }: ChecklistScreenProps) {
   const { t } = useLanguage();
   const [index, setIndex] = useState(0);
-  const total = questions.length;
+  const questions = useMemo(() => getDynamicQuestions(answers), [answers]);
   const question = questions[index];
-  const qText = t.questions[question.id];
-  const current = answers.find((a) => a.questionId === question.id);
+  const current = answers.find((answer) => answer.questionId === question.id);
   const selected = current?.value ?? null;
   const comment = current?.comment ?? '';
-
+  const total = questions.length;
   const isLast = index === total - 1;
-
-  const ANSWER_OPTIONS: { value: AnswerValue; label: string; hint: string }[] = [
+  const answerOptions: { value: AnswerValue; label: string; hint: string }[] = [
     { value: 'yes', label: t.checklist.answerYes, hint: t.checklist.answerYesHint },
     { value: 'no', label: t.checklist.answerNo, hint: t.checklist.answerNoHint },
-    {
-      value: 'unknown',
-      label: t.checklist.answerUnknown,
-      hint: t.checklist.answerUnknownHint,
-    },
+    { value: 'unknown', label: t.checklist.answerUnknown, hint: t.checklist.answerUnknownHint },
   ];
 
   function selectAnswer(value: AnswerValue) {
@@ -44,65 +37,46 @@ export default function ChecklistScreen({
   }
 
   function updateComment(text: string) {
-    if (selected) {
-      onAnswerChange(question.id, selected, text);
-    }
+    if (selected) onAnswerChange(question.id, selected, text);
   }
 
   function goNext() {
     if (!selected) return;
-    if (isLast) {
-      onFinish();
-    } else {
-      setIndex((i) => i + 1);
-    }
+    if (isLast) onFinish();
+    else setIndex((value) => value + 1);
   }
 
   function goBack() {
-    if (index === 0) {
-      onExitToHome();
-    } else {
-      setIndex((i) => i - 1);
-    }
+    if (index === 0) onExitToHome();
+    else setIndex((value) => value - 1);
   }
 
   return (
     <div className="flex flex-1 flex-col px-5 pb-6 pt-2">
-      <div className="mb-4">
-        <div className="mb-2 flex items-center justify-between text-sm font-bold text-neutral-500">
-          <span>{t.checklist.progress(index + 1, total)}</span>
+      <div className="flex-1">
+        <div className="mb-3 flex items-center gap-2 text-xs font-bold text-neutral-400">
+          <span>{t.checklist.checkLabel}</span>
           {question.isGasRelated && (
             <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-700">
               {t.checklist.importantBadge}
             </span>
           )}
         </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
-          <div
-            className="h-full rounded-full bg-neutral-900 transition-all"
-            style={{ width: `${((index + 1) / total) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      <div className="flex-1">
-        <h2 className="mb-6 text-2xl font-bold leading-snug text-neutral-900">
-          {qText.text}
-        </h2>
+        <h2 className="mb-6 text-2xl font-bold leading-snug text-neutral-900">{t.questions[question.id].text}</h2>
 
         <div className="space-y-3">
-          {ANSWER_OPTIONS.map((opt) => {
-            const isSelected = selected === opt.value;
+          {answerOptions.map((option) => {
+            const isSelected = selected === option.value;
             return (
               <button
-                key={opt.value}
+                key={option.value}
                 type="button"
-                onClick={() => selectAnswer(opt.value)}
+                onClick={() => selectAnswer(option.value)}
                 className={`tap-target w-full rounded-2xl border-2 px-5 py-4 text-left text-lg font-bold transition-colors ${
                   isSelected
-                    ? opt.value === 'yes'
+                    ? option.value === 'yes'
                       ? 'border-green-600 bg-green-50 text-green-700'
-                      : opt.value === 'no'
+                      : option.value === 'no'
                         ? 'border-red-600 bg-red-50 text-red-700'
                         : 'border-amber-500 bg-amber-50 text-amber-700'
                     : 'border-neutral-200 bg-white text-neutral-800 active:bg-neutral-50'
@@ -110,10 +84,8 @@ export default function ChecklistScreen({
               >
                 <span className="flex items-center justify-between">
                   <span className="flex items-baseline gap-2">
-                    {opt.label}
-                    <span className="text-xs font-normal text-neutral-400">
-                      （{opt.hint}）
-                    </span>
+                    {option.label}
+                    <span className="text-xs font-normal text-neutral-400">（{option.hint}）</span>
                   </span>
                   {isSelected && <span aria-hidden="true">✓</span>}
                 </span>
@@ -124,16 +96,13 @@ export default function ChecklistScreen({
 
         {selected === 'unknown' && (
           <div className="mt-4">
-            <label
-              htmlFor="unknown-comment"
-              className="mb-1 block text-sm font-bold text-neutral-500"
-            >
+            <label htmlFor="unknown-comment" className="mb-1 block text-sm font-bold text-neutral-500">
               {t.checklist.commentLabel}
             </label>
             <textarea
               id="unknown-comment"
               value={comment}
-              onChange={(e) => updateComment(e.target.value)}
+              onChange={(event) => updateComment(event.target.value)}
               rows={4}
               placeholder={t.checklist.commentPlaceholder}
               className="w-full rounded-xl border border-neutral-300 p-3 text-base text-neutral-900 focus:border-neutral-900 focus:outline-none"
