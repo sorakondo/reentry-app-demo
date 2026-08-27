@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { BuildingInfo, GasAlarmState, SeismicInfo, SeismicScale } from '../types';
-import { formatRelativeTime } from '../logic/useGasAlarm';
+import type { BuildingInfo, PriorCheckRecord, SeismicInfo, SeismicScale } from '../types';
 import { formatDateTimeJP } from '../logic/expertReport';
 import { fetchNearbySeismicInfoMock, MANUAL_SCALE_VALUES } from '../logic/seismicInfo';
 import { getCongestionLevel, useExpertCapacity } from '../logic/useExpertCapacity';
@@ -9,11 +8,11 @@ import BigButton from '../components/BigButton';
 import BuildingInfoModal from '../components/BuildingInfoModal';
 
 interface HomeScreenProps {
-  gasAlarm: GasAlarmState;
+  // この建物の確認が既に済んでいるかを示すデモ用の記録（操作パネルから切り替え可能）
+  priorCheck: PriorCheckRecord | null;
   buildingInfo: BuildingInfo;
   onBuildingInfoChange: (info: BuildingInfo) => void;
   onStart: () => void;
-  onToggleAlarm: () => void;
   onSeismicInfoChange: (info: SeismicInfo) => void;
 }
 
@@ -25,17 +24,15 @@ const LOADING_INFO: SeismicInfo = {
 };
 
 export default function HomeScreen({
-  gasAlarm,
+  priorCheck,
   buildingInfo,
   onBuildingInfoChange,
   onStart,
-  onToggleAlarm,
   onSeismicInfoChange,
 }: HomeScreenProps) {
   const { t, lang } = useLanguage();
   const [now, setNow] = useState(new Date());
   const [checkedAt] = useState(new Date());
-  const [showDevPanel, setShowDevPanel] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   const [autoInfo, setAutoInfo] = useState<SeismicInfo>(LOADING_INFO);
@@ -88,8 +85,6 @@ export default function HomeScreen({
     autoInfo.areaName,
   ]);
 
-  const isNormal = gasAlarm.status === 'normal';
-
   const seismicDisplayLabel =
     !manualMode && autoInfo.status === 'loading'
       ? t.seismic.statusLoading
@@ -127,6 +122,37 @@ export default function HomeScreen({
         </h1>
         <p className="mt-1 text-base text-neutral-500">{t.home.appSubtitle}</p>
       </header>
+
+      {/* この建物の確認が既に済んでいるかを示すデモ用の記録カード */}
+      <section
+        className={`mb-4 rounded-2xl border p-4 ${
+          priorCheck
+            ? 'border-indigo-200 bg-indigo-50/50'
+            : 'border-neutral-200 bg-neutral-50'
+        }`}
+      >
+        <p className="mb-2 text-sm font-bold text-neutral-500">{t.priorCheck.sectionTitle}</p>
+        {priorCheck ? (
+          <dl className="space-y-1.5 text-sm">
+            <div className="flex items-center justify-between">
+              <dt className="text-neutral-500">{t.priorCheck.signerLabel}</dt>
+              <dd className="font-bold text-neutral-900">{priorCheck.signerName}</dd>
+            </div>
+            <div className="flex items-center justify-between">
+              <dt className="text-neutral-500">{t.priorCheck.savedAtLabel}</dt>
+              <dd className="font-bold text-neutral-900">
+                {formatDateTimeJP(priorCheck.savedAt, lang)}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between">
+              <dt className="text-neutral-500">{t.priorCheck.recordIdLabel}</dt>
+              <dd className="font-bold text-neutral-900">{priorCheck.recordId}</dd>
+            </div>
+          </dl>
+        ) : (
+          <p className="text-sm text-neutral-500">{t.priorCheck.notCheckedText}</p>
+        )}
+      </section>
 
       <section className="relative mb-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
         <div className="mb-2 flex items-center justify-between">
@@ -278,43 +304,6 @@ export default function HomeScreen({
         />
       )}
 
-      <section
-        className={`mb-4 rounded-2xl border-2 p-4 ${
-          isNormal
-            ? 'border-green-200 bg-green-50'
-            : 'border-red-300 bg-red-50'
-        }`}
-      >
-        <p className="mb-1 text-sm font-bold text-neutral-500">
-          {t.home.gasAlarmSectionTitle}
-        </p>
-        <div className="flex items-center gap-2">
-          <span className="text-2xl leading-none">
-            {isNormal ? '\u{1F7E2}' : '\u{1F534}'}
-          </span>
-          <span
-            className={`text-xl font-bold ${
-              isNormal ? 'text-green-700' : 'text-red-700'
-            }`}
-          >
-            {isNormal ? t.home.gasAlarmNormal : t.home.gasAlarmAlarm}
-          </span>
-        </div>
-        <p className="mt-2 text-sm text-neutral-600">
-          {isNormal ? t.home.gasAlarmNormalDesc : t.home.gasAlarmAlarmDesc}
-        </p>
-        <div className="mt-3 flex items-center justify-between text-xs text-neutral-400">
-          <span>
-            {t.home.gasLevelLabel}：
-            {isNormal ? t.home.gasLevelNormal : t.home.gasLevelAbnormal}
-          </span>
-          <span>
-            {t.home.lastUpdatedLabel}：
-            {formatRelativeTime(gasAlarm.lastUpdated, now, lang)}
-          </span>
-        </div>
-      </section>
-
       {/* 専門家テレビ電話の対応状況 */}
       <section className="mb-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
         <div className="mb-1 flex items-center justify-between">
@@ -351,30 +340,6 @@ export default function HomeScreen({
         <BigButton onClick={onStart} className="text-xl">
           {t.home.startButton}
         </BigButton>
-
-        <div className="mt-6 border-t border-dashed border-neutral-200 pt-3">
-          <button
-            type="button"
-            onClick={() => setShowDevPanel((v) => !v)}
-            className="w-full text-center text-xs text-neutral-300"
-          >
-            {showDevPanel ? t.home.devPanelClose : t.home.devPanelOpen}
-          </button>
-          {showDevPanel && (
-            <div className="mt-2 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
-              <p className="mb-2 text-xs text-neutral-400">{t.home.devPanelDesc}</p>
-              <button
-                type="button"
-                onClick={onToggleAlarm}
-                className="tap-target w-full rounded-xl border border-neutral-300 bg-white text-sm font-bold text-neutral-700 active:bg-neutral-100"
-              >
-                {t.home.toggleAlarmButton(
-                  isNormal ? t.home.gasAlarmNormal : t.home.gasAlarmAlarm,
-                )}
-              </button>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

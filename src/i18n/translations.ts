@@ -20,11 +20,14 @@ interface Translation {
     gasAlarmSectionTitle: string;
     gasAlarmNormal: string;
     gasAlarmAlarm: string;
+    gasAlarmNoSignal: string;
     gasAlarmNormalDesc: string;
     gasAlarmAlarmDesc: string;
+    gasAlarmNoSignalDesc: string;
     gasLevelLabel: string;
     gasLevelNormal: string;
     gasLevelAbnormal: string;
+    gasLevelNoSignal: string;
     lastUpdatedLabel: string;
     disclaimer: string;
     startButton: string;
@@ -80,6 +83,42 @@ interface Translation {
     notSet: string;
     saveButton: string;
     cancelButton: string;
+  };
+  priorCheck: {
+    sectionTitle: string;
+    signerLabel: string;
+    savedAtLabel: string;
+    recordIdLabel: string;
+    notCheckedText: string;
+  };
+  viewSwitcher: {
+    phoneTab: string;
+    entranceTab: string;
+    controlTab: string;
+  };
+  entranceDisplay: {
+    diagnosingTitle: string;
+    diagnosingDesc: string;
+    allowedTitle: string;
+    allowedDesc: string;
+    deniedTitle: string;
+    deniedDesc: string;
+    footerNote: string;
+  };
+  controlPanel: {
+    title: string;
+    subtitle: string;
+    gasAlarmSectionTitle: string;
+    setNormalButton: string;
+    setAlarmButton: string;
+    setNoSignalButton: string;
+    currentStatusLabel: string;
+    priorCheckSectionTitle: string;
+    priorCheckOnButton: string;
+    priorCheckOffButton: string;
+    priorCheckCurrentLabel: string;
+    priorCheckOnStatus: string;
+    priorCheckOffStatus: string;
   };
   checklist: {
     checkLabel: string;
@@ -177,6 +216,16 @@ interface Translation {
     clearButton: string;
     completeSignButton: string;
     cancelButton: string;
+    entranceControlSectionTitle: string;
+    entranceControlDesc: string;
+    setEntranceAllowedButton: string;
+    setEntranceDeniedButton: string;
+    setEntranceDiagnosingButton: string;
+    entranceCurrentLabel: string;
+    entranceStatusDiagnosing: string;
+    entranceStatusAllowed: string;
+    entranceStatusDenied: string;
+    entranceHoldNote: string;
   };
 }
 
@@ -193,11 +242,14 @@ const ja: Translation = {
     gasAlarmSectionTitle: 'ガス漏れ警報器',
     gasAlarmNormal: '正常',
     gasAlarmAlarm: 'ガス漏れ警報',
+    gasAlarmNoSignal: '通信なし',
     gasAlarmNormalDesc: '警報器からの最新データを受信しています',
     gasAlarmAlarmDesc: '警報器が異常を検知しています。ただちに避難してください。',
+    gasAlarmNoSignalDesc: '警報器との通信が途絶えています。状態を確認できません。',
     gasLevelLabel: 'ガス濃度',
     gasLevelNormal: '正常範囲',
     gasLevelAbnormal: '異常濃度を検知',
+    gasLevelNoSignal: '受信なし',
     lastUpdatedLabel: '最終受信',
     disclaimer:
       'このシステムは建物の安全性を最終的に保証するものではありません。危険を感じた場合は建物に立ち入らないでください。',
@@ -277,6 +329,42 @@ const ja: Translation = {
     saveButton: '保存する',
     cancelButton: 'キャンセル',
   },
+  priorCheck: {
+    sectionTitle: 'この建物の確認記録',
+    signerLabel: '署名者',
+    savedAtLabel: '保存日時',
+    recordIdLabel: '記録ID',
+    notCheckedText: 'この建物はまだ確認されていません。',
+  },
+  viewSwitcher: {
+    phoneTab: '📱 スマホ',
+    entranceTab: '🚪 入口',
+    controlTab: '🎛 操作パネル',
+  },
+  entranceDisplay: {
+    diagnosingTitle: '診断中',
+    diagnosingDesc: '現在、建物の安全性を確認しています。しばらくお待ちください。',
+    allowedTitle: '入場可能',
+    allowedDesc: '建物への再入場が許可されています。',
+    deniedTitle: '入場禁止',
+    deniedDesc: '建物への再入場は禁止されています。立ち入らないでください。',
+    footerNote: 'これは建物入口に設置される案内表示のデモです。',
+  },
+  controlPanel: {
+    title: 'デモ用 操作パネル',
+    subtitle: 'このパネルはデモ発表用の操作画面です。実際のシステムには存在しません。',
+    gasAlarmSectionTitle: 'ガス漏れ警報器の状態',
+    setNormalButton: '正常にする',
+    setAlarmButton: '警報にする',
+    setNoSignalButton: '通信なしにする',
+    currentStatusLabel: '現在の状態',
+    priorCheckSectionTitle: 'この建物の確認記録',
+    priorCheckOnButton: '確認済みにする',
+    priorCheckOffButton: '未確認にする',
+    priorCheckCurrentLabel: '現在の状態',
+    priorCheckOnStatus: '確認済み',
+    priorCheckOffStatus: '未確認',
+  },
   checklist: {
     checkLabel: '確認項目',
     progress: (index, total) => `${index} / ${total}`,
@@ -297,75 +385,75 @@ const ja: Translation = {
   },
   questions: {
     q1_tilt: {
-      text: '建物に明らかな傾き・沈下がありませんか？',
+      text: '建物に明らかな傾き・沈下がありますか？',
       shortLabel: '建物の傾き',
       dangerDescription: '建物の傾きなど、外観上の異常がある可能性があります',
       unknownBaseText:
         '建物の傾きについて、外観からの確認だけでは現場で安全性を判断できませんでした。',
     },
     q2_crack: {
-      text: '主要構造部に重大なひび割れ・損傷がありませんか？',
+      text: '主要構造部（柱・梁など）に重大なひび割れ・損傷がありますか？',
       shortLabel: '柱・梁の損傷',
       dangerDescription: '柱・梁に危険がある可能性があります',
       unknownBaseText:
         '柱・梁について、損傷の有無や程度を現場で判断できませんでした。',
     },
     q3_adjacent: {
-      text: '隣接建物・地盤に危険な変状がありませんか？',
+      text: '隣接建物・地盤に危険な変状がありますか？',
       shortLabel: '隣接建物・地盤の危険',
       dangerDescription: '隣接建物・地盤に危険な変状がある可能性があります',
       unknownBaseText: '隣接建物・地盤の状態を現場で判断できませんでした。',
     },
     q4_monitoring: {
-      text: '構造モニタリングが正常で、最新データを受信していますか？',
+      text: '構造モニタリングに異常がありますか？（最新データを受信できていない場合を含む）',
       shortLabel: '構造モニタリング',
       dangerDescription: '構造モニタリングに異常がある可能性があります',
       unknownBaseText: '構造モニタリングの状態を現場で判断できませんでした。',
     },
     q5_ceiling: {
-      text: '天井に落下・崩落の兆候がありませんか？',
+      text: '天井に落下・崩落の兆候がありますか？',
       shortLabel: '天井の損傷',
       dangerDescription: '天井に落下・崩落の危険がある可能性があります',
       unknownBaseText: '天井の落下・崩落の危険を現場で判断できませんでした。',
     },
     q6_glass: {
-      text: 'ガラスやその他の落下物による危険がありませんか？',
+      text: 'ガラスやその他の落下物による危険がありますか？',
       shortLabel: 'ガラス・落下物の危険',
       dangerDescription: 'ガラス・落下物による危険がある可能性があります',
       unknownBaseText: 'ガラス・落下物の危険を現場で判断できませんでした。',
     },
     q7_exit: {
-      text: '非常階段・出口を安全に利用できますか？',
+      text: '非常階段・出口の利用に支障がありますか？',
       shortLabel: '非常階段・出口',
       dangerDescription: '非常階段・出口を利用できない可能性があります',
       unknownBaseText: '非常階段・出口の利用可否を現場で判断できませんでした。',
     },
     q8_gas: {
-      text: 'ガスの状態が正常で、ガス臭や警報がありませんか？',
+      text: 'ガス臭や警報など、ガスに関する異常がありますか？',
       shortLabel: 'ガスの状態',
       dangerDescription: 'ガス漏れの危険がある可能性があります',
       unknownBaseText: 'ガスの状態を現場で判断できませんでした。特に慎重な確認が必要です。',
     },
     q9_fire: {
-      text: '火災警報・消火設備に異常がありませんか？',
+      text: '火災警報・消火設備に異常がありますか？',
       shortLabel: '火災警報・消防設備',
       dangerDescription: '火災警報・消防設備に異常がある可能性があります',
       unknownBaseText: '火災警報・消防設備の状態を現場で判断できませんでした。',
     },
     q10_elevator: {
-      text: 'エレベーターの停止状況を把握し、閉じ込められた人がいませんか？',
+      text: 'エレベーターが停止している、または閉じ込められた人がいますか？',
       shortLabel: 'エレベーター・閉じ込め',
       dangerDescription: 'エレベーターの停止や閉じ込めの危険があります',
       unknownBaseText: 'エレベーターの停止・閉じ込め状況を現場で判断できませんでした。',
     },
     q11_power: {
-      text: '電力の状態が把握でき、通電による危険がありませんか？',
+      text: '電力に異常があり、通電による危険がありますか？',
       shortLabel: '電力の状態',
       dangerDescription: '電力の停止・通電による追加確認が必要です',
       unknownBaseText: '電力の状態を現場で判断できませんでした。',
     },
     q12_missing_data: {
-      text: '安全判定に必要な重要データがそろっていますか？',
+      text: '安全判定に必要な重要データが不足していますか？',
       shortLabel: '重要データの不足',
       dangerDescription: '安全判定に必要な重要データが不足しています',
       unknownBaseText: '安全判定に必要な重要データの有無を判断できませんでした。',
@@ -453,6 +541,16 @@ const ja: Translation = {
     clearButton: 'クリア',
     completeSignButton: '署名して完了',
     cancelButton: 'キャンセル',
+    entranceControlSectionTitle: '入口ディスプレイの設定',
+    entranceControlDesc: '建物入口のディスプレイに表示する内容を決定してください。',
+    setEntranceAllowedButton: '入口を「入場可能」にする',
+    setEntranceDeniedButton: '入口を「入場禁止」にする',
+    setEntranceDiagnosingButton: '入口を「診断中」にする',
+    entranceCurrentLabel: '現在の入口表示',
+    entranceStatusDiagnosing: '診断中',
+    entranceStatusAllowed: '入場可能',
+    entranceStatusDenied: '入場禁止',
+    entranceHoldNote: 'HOLD（再入場禁止）の判定のため、「入場可能」は選択できません。',
   },
 };
 
@@ -469,12 +567,15 @@ const en: Translation = {
     gasAlarmSectionTitle: 'Gas Leak Detector',
     gasAlarmNormal: 'Normal',
     gasAlarmAlarm: 'Gas Leak Alarm',
+    gasAlarmNoSignal: 'No Signal',
     gasAlarmNormalDesc: 'Receiving the latest data from the detector',
     gasAlarmAlarmDesc:
       'The detector has detected an abnormality. Evacuate immediately.',
+    gasAlarmNoSignalDesc: 'Communication with the detector has been lost. Status cannot be confirmed.',
     gasLevelLabel: 'Gas level',
     gasLevelNormal: 'Normal range',
     gasLevelAbnormal: 'Abnormal level detected',
+    gasLevelNoSignal: 'No data received',
     lastUpdatedLabel: 'Last received',
     disclaimer:
       'This system does not ultimately guarantee the safety of the building. If you sense danger, do not enter the building.',
@@ -554,6 +655,42 @@ const en: Translation = {
     saveButton: 'Save',
     cancelButton: 'Cancel',
   },
+  priorCheck: {
+    sectionTitle: "Building's Check Record",
+    signerLabel: 'Signer',
+    savedAtLabel: 'Saved at',
+    recordIdLabel: 'Record ID',
+    notCheckedText: 'This building has not been checked yet.',
+  },
+  viewSwitcher: {
+    phoneTab: '📱 Phone',
+    entranceTab: '🚪 Entrance',
+    controlTab: '🎛 Control Panel',
+  },
+  entranceDisplay: {
+    diagnosingTitle: 'Diagnosing',
+    diagnosingDesc: 'The building safety check is currently in progress. Please wait.',
+    allowedTitle: 'Entry Allowed',
+    allowedDesc: 'Re-entry into the building is currently allowed.',
+    deniedTitle: 'Entry Prohibited',
+    deniedDesc: 'Re-entry into the building is prohibited. Do not enter.',
+    footerNote: 'This is a demo of the sign displayed at the building entrance.',
+  },
+  controlPanel: {
+    title: 'Demo Control Panel',
+    subtitle: 'This panel is for the presentation demo only and does not exist in a real system.',
+    gasAlarmSectionTitle: 'Gas Leak Detector State',
+    setNormalButton: 'Set to Normal',
+    setAlarmButton: 'Set to Alarm',
+    setNoSignalButton: 'Set to No Signal',
+    currentStatusLabel: 'Current state',
+    priorCheckSectionTitle: "This Building's Check Record",
+    priorCheckOnButton: 'Mark as Checked',
+    priorCheckOffButton: 'Mark as Not Checked',
+    priorCheckCurrentLabel: 'Current state',
+    priorCheckOnStatus: 'Checked',
+    priorCheckOffStatus: 'Not checked',
+  },
   checklist: {
     checkLabel: 'Check item',
     progress: (index, total) => `${index} / ${total}`,
@@ -574,75 +711,75 @@ const en: Translation = {
   },
   questions: {
     q1_tilt: {
-      text: 'Is the building clearly NOT tilting or settling?',
+      text: 'Is there an obvious tilt or settling in the building?',
       shortLabel: 'Building tilt',
       dangerDescription: 'There may be a visible abnormality such as a building tilt',
       unknownBaseText:
         'Whether the building is tilting could not be judged on site from a visual check alone.',
     },
     q2_crack: {
-      text: 'Are there NO major cracks or damage to primary structural members?',
+      text: 'Is there major cracking or damage to primary structural members (columns, beams)?',
       shortLabel: 'Column / beam damage',
       dangerDescription: 'There may be danger from damaged columns or beams',
       unknownBaseText:
         'Whether the columns or beams are damaged, and how severely, could not be judged on site.',
     },
     q3_adjacent: {
-      text: 'Are there NO dangerous changes to adjacent buildings or the ground?',
+      text: 'Is there a dangerous change to an adjacent building or the ground?',
       shortLabel: 'Adjacent / ground hazard',
       dangerDescription: 'Adjacent buildings or the ground may have a dangerous change',
       unknownBaseText: 'The condition of adjacent buildings or the ground could not be judged on site.',
     },
     q4_monitoring: {
-      text: 'Is structural monitoring normal, with the latest data received?',
+      text: 'Is there a problem with structural monitoring (including not receiving the latest data)?',
       shortLabel: 'Structural monitoring',
       dangerDescription: 'Structural monitoring may be abnormal',
       unknownBaseText: 'The status of structural monitoring could not be judged on site.',
     },
     q5_ceiling: {
-      text: 'Are there NO signs of ceiling damage or collapse?',
+      text: 'Are there signs of ceiling damage or potential collapse?',
       shortLabel: 'Ceiling damage',
       dangerDescription: 'There may be a risk of ceiling damage or collapse',
       unknownBaseText: 'The risk of ceiling damage or collapse could not be judged on site.',
     },
     q6_glass: {
-      text: 'Is there NO hazard from glass or other falling objects?',
+      text: 'Is there a hazard from glass or other falling objects?',
       shortLabel: 'Glass / falling objects',
       dangerDescription: 'There may be a glass or falling-object hazard',
       unknownBaseText: 'The glass or falling-object hazard could not be judged on site.',
     },
     q7_exit: {
-      text: 'Are emergency stairs and exits safe to use?',
+      text: 'Is there any problem using the emergency stairs or exits?',
       shortLabel: 'Emergency stairs / exits',
       dangerDescription: 'Emergency stairs or exits may not be usable',
       unknownBaseText: 'Whether emergency stairs or exits are usable could not be judged on site.',
     },
     q8_gas: {
-      text: 'Is the gas status normal, with no odor or alarm?',
+      text: 'Is there a gas-related abnormality, such as an odor or alarm?',
       shortLabel: 'Gas status',
       dangerDescription: 'There may be a gas leak hazard',
       unknownBaseText: 'The gas status could not be judged on site. Extra caution is needed.',
     },
     q9_fire: {
-      text: 'Are fire alarms and fire-protection systems operating normally?',
+      text: 'Is there an abnormality in the fire alarm or fire-protection systems?',
       shortLabel: 'Fire alarm / fire protection',
       dangerDescription: 'Fire alarms or fire-protection systems may be abnormal',
       unknownBaseText: 'The status of fire alarms or fire-protection systems could not be judged on site.',
     },
     q10_elevator: {
-      text: 'Is the elevator status known, with no person trapped inside?',
+      text: 'Has the elevator stopped, or is anyone trapped inside?',
       shortLabel: 'Elevator / trapped person',
       dangerDescription: 'There may be an elevator outage or trapped person',
       unknownBaseText: 'The elevator outage or trapped-person status could not be judged on site.',
     },
     q11_power: {
-      text: 'Is the power status known, with no electrical hazard?',
+      text: 'Is there a power abnormality creating an electrical hazard?',
       shortLabel: 'Power status',
       dangerDescription: 'Additional checks are needed for power or electrical hazards',
       unknownBaseText: 'The power status could not be judged on site.',
     },
     q12_missing_data: {
-      text: 'Is all critical data needed for a safety decision available?',
+      text: 'Is critical data needed for the safety decision missing?',
       shortLabel: 'Missing critical data',
       dangerDescription: 'Critical data needed for a safety decision is missing',
       unknownBaseText: 'The availability of critical safety data could not be judged on site.',
@@ -733,6 +870,16 @@ const en: Translation = {
     clearButton: 'Clear',
     completeSignButton: 'Sign & Complete',
     cancelButton: 'Cancel',
+    entranceControlSectionTitle: 'Entrance Display Setting',
+    entranceControlDesc: 'Decide what the entrance display should show.',
+    setEntranceAllowedButton: 'Set Entrance to "Allowed"',
+    setEntranceDeniedButton: 'Set Entrance to "Prohibited"',
+    setEntranceDiagnosingButton: 'Set Entrance to "Diagnosing"',
+    entranceCurrentLabel: 'Current entrance display',
+    entranceStatusDiagnosing: 'Diagnosing',
+    entranceStatusAllowed: 'Entry Allowed',
+    entranceStatusDenied: 'Entry Prohibited',
+    entranceHoldNote: '"Allowed" cannot be selected because the result is HOLD (do not re-enter).',
   },
 };
 

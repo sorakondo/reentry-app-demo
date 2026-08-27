@@ -37,12 +37,22 @@ export function useGasAlarm() {
     setLastUpdated(new Date());
   }
 
+  function setNoSignal() {
+    setStatus('noSignal');
+    setLastUpdated(new Date());
+  }
+
+  function setAlarmStatus(next: AlarmStatus) {
+    setStatus(next);
+    setLastUpdated(new Date());
+  }
+
   const state: GasAlarmState = {
     status,
     lastUpdated,
   };
 
-  return { state, toggleStatus, setNormal, setAlarm };
+  return { state, toggleStatus, setNormal, setAlarm, setNoSignal, setAlarmStatus };
 }
 
 // 「数秒前」のような相対時間表示（言語対応）

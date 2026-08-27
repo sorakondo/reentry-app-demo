@@ -1,21 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import type { SignatureState } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
-import { formatDateTimeJP } from '../logic/expertReport';
 import BigButton from '../components/BigButton';
-import SignaturePad from '../components/SignaturePad';
 
 interface ExpertCallScreenProps {
   caseNumber: string;
   recordId: string;
   onEndCall: () => void;
 }
-
-const INITIAL_SIGNATURE: SignatureState = {
-  signed: false,
-  signedAt: null,
-  dataUrl: null,
-};
 
 interface SentPhoto {
   id: number;
@@ -43,11 +34,9 @@ export default function ExpertCallScreen({
   recordId,
   onEndCall,
 }: ExpertCallScreenProps) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const [seconds, setSeconds] = useState(0);
   const [photos, setPhotos] = useState<SentPhoto[]>([]);
-  const [signature, setSignature] = useState<SignatureState>(INITIAL_SIGNATURE);
-  const [showSignaturePad, setShowSignaturePad] = useState(false);
   const nextIdRef = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -196,57 +185,6 @@ export default function ExpertCallScreen({
 
         <p className="mt-3 text-xs text-neutral-400">{t.expertCall.photoDemoNote}</p>
       </section>
-
-      {/* 確認完了の署名 */}
-      <section className="mb-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-        <div className="mb-1 flex items-center justify-between">
-          <p className="text-sm font-bold text-neutral-500">
-            {t.expertCall.signatureSectionTitle}
-          </p>
-          <span
-            className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-              signature.signed
-                ? 'bg-green-100 text-green-700'
-                : 'bg-neutral-200 text-neutral-600'
-            }`}
-          >
-            {signature.signed ? t.expertCall.signedStatus : t.expertCall.unsignedStatus}
-          </span>
-        </div>
-        <p className="mb-3 text-sm text-neutral-600">{t.expertCall.signatureSectionDesc}</p>
-
-        {signature.signed && signature.dataUrl && (
-          <div className="mb-3 flex items-center gap-3">
-            <img
-              src={signature.dataUrl}
-              alt={t.expertCall.signedStatus}
-              className="h-16 w-28 rounded-lg border border-neutral-200 bg-white object-contain"
-            />
-            {signature.signedAt && (
-              <p className="text-xs text-neutral-400">
-                {t.expertCall.signedAtLabel}：{formatDateTimeJP(signature.signedAt, lang)}
-              </p>
-            )}
-          </div>
-        )}
-
-        <button
-          type="button"
-          onClick={() => setShowSignaturePad(true)}
-          className="tap-target w-full rounded-xl border-2 border-dashed border-neutral-300 bg-white text-base font-bold text-neutral-700 active:bg-neutral-100"
-        >
-          {'✍️'} {t.expertCall.signButton}
-        </button>
-      </section>
-
-      {showSignaturePad && (
-        <SignaturePad
-          onComplete={(dataUrl) =>
-            setSignature({ signed: true, signedAt: new Date(), dataUrl })
-          }
-          onClose={() => setShowSignaturePad(false)}
-        />
-      )}
 
       <p className="mb-6 rounded-xl bg-neutral-100 p-3 text-sm leading-relaxed text-neutral-500">
         {t.expertCall.demoNote}

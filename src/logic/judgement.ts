@@ -28,7 +28,7 @@ export function judge(
 
   for (const question of questions) {
     const answer = answers.find((item) => item.questionId === question.id);
-    if (answer?.value === 'no' && holdQuestionIds.has(question.id)) dangerReasonKeys.push(question.id);
+    if (answer?.value === 'yes' && holdQuestionIds.has(question.id)) dangerReasonKeys.push(question.id);
   }
 
   const unknownItems = questions
@@ -40,14 +40,14 @@ export function judge(
 
   const targetedItems = questions
     .map((question) => ({ questionId: question.id, value: answers.find((answer) => answer.questionId === question.id)?.value }))
-    .filter((item): item is { questionId: typeof item.questionId; value: 'no' | 'unknown' } => item.value === 'no' || item.value === 'unknown');
+    .filter((item): item is { questionId: typeof item.questionId; value: 'yes' | 'unknown' } => item.value === 'yes' || item.value === 'unknown');
   const hasHoldFinding = questions.some((question) =>
-    answers.find((answer) => answer.questionId === question.id)?.value === 'no' && holdQuestionIds.has(question.id),
+    answers.find((answer) => answer.questionId === question.id)?.value === 'yes' && holdQuestionIds.has(question.id),
   );
   const hasExpertFinding = questions.some((question) =>
     answers.find((answer) => answer.questionId === question.id)?.value === 'unknown' && expertQuestionIds.has(question.id),
   ) || questions.some((question) =>
-    question.id === 'q4_monitoring' && answers.find((answer) => answer.questionId === question.id)?.value === 'no',
+    question.id === 'q4_monitoring' && answers.find((answer) => answer.questionId === question.id)?.value === 'yes',
   );
 
   const baseDetail = { dangerReasonKeys, gasAlarmTriggered, unknownItems, targetedItems };

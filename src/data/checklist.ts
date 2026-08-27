@@ -2,8 +2,8 @@ import type { Answer, ChecklistQuestion, QuestionId } from '../types';
 
 // 内閣府・東京消防庁の考え方を下敷きにしたデモ用の確認項目。
 // 表示文言は i18n/translations.ts で管理し、状況に応じて関連項目だけを表示する。
-// 質問文はすべて「危険がないか」という形式。
-// 「はい」= 危険なし / 「いいえ」= 危険あり / 「判断できない」= 現場では確認できない
+// 質問文はすべて「危険がないか」を直接尋ねる肯定形（二重否定を避けた直接的な言い回し）。
+// 「はい」= 危険あり（問題がある） / 「いいえ」= 危険なし（問題ない） / 「判断できない」= 現場では確認できない
 export const CHECKLIST_QUESTIONS: ChecklistQuestion[] = [
   { id: 'q1_tilt', order: 1, isCritical: true },
   { id: 'q2_crack', order: 2, isCritical: true },
@@ -25,7 +25,8 @@ function answerValue(answers: Answer[], questionId: QuestionId) {
 
 function hasConcern(answers: Answer[], questionId: QuestionId) {
   const value = answerValue(answers, questionId);
-  return value === 'no' || value === 'unknown';
+  // 「はい」= 危険あり（問題がある）、「判断できない」も要フォローとして扱う
+  return value === 'yes' || value === 'unknown';
 }
 
 /** 回答内容に応じて、次に必要な確認項目だけを返す。 */

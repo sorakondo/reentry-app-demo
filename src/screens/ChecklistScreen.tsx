@@ -75,9 +75,9 @@ export default function ChecklistScreen({ answers, onAnswerChange, onFinish, onE
                 className={`tap-target w-full rounded-2xl border-2 px-5 py-4 text-left text-lg font-bold transition-colors ${
                   isSelected
                     ? option.value === 'yes'
-                      ? 'border-green-600 bg-green-50 text-green-700'
+                      ? 'border-red-600 bg-red-50 text-red-700'
                       : option.value === 'no'
-                        ? 'border-red-600 bg-red-50 text-red-700'
+                        ? 'border-green-600 bg-green-50 text-green-700'
                         : 'border-amber-500 bg-amber-50 text-amber-700'
                     : 'border-neutral-200 bg-white text-neutral-800 active:bg-neutral-50'
                 }`}

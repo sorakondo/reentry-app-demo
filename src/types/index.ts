@@ -32,8 +32,8 @@ export interface ChecklistQuestion {
   isGasRelated?: boolean;
 }
 
-// ガス漏れ警報器の状態
-export type AlarmStatus = 'normal' | 'alarm';
+// ガス漏れ警報器の状態（通信なし＝警報器からの通信が途絶えている状態）
+export type AlarmStatus = 'normal' | 'alarm' | 'noSignal';
 
 export interface GasAlarmState {
   status: AlarmStatus;
@@ -55,7 +55,7 @@ export interface JudgementDetail {
   // 「専門家による確認が必要」の対象項目
   unknownItems: { questionId: QuestionId; comment: string }[];
   // 追加確認が必要な対象項目
-  targetedItems: { questionId: QuestionId; value: Exclude<AnswerValue, 'yes'> }[];
+  targetedItems: { questionId: QuestionId; value: Exclude<AnswerValue, 'no'> }[];
 }
 
 // アプリの画面
@@ -127,3 +127,19 @@ export interface SeismicInfo {
   // 自動取得に失敗した理由（表示用）
   errorMessage?: string;
 }
+
+// 入口ディスプレイの表示状態。
+// 'diagnosing' = 診断前・診断中（デフォルト）、スマホ側の最終画面のボタンで
+// 'allowed' / 'denied' に切り替える（自動では切り替わらない）。
+export type EntranceDisplayState = 'diagnosing' | 'allowed' | 'denied';
+
+// 「この建物の確認は既に済んでいるか」を表すデモ用の記録（過去の確認記録のモック）
+export interface PriorCheckRecord {
+  signerName: string;
+  savedAt: Date;
+  recordId: string;
+}
+
+// デモ用の3つの「画面（デバイス）」切り替え
+// phone = スマホ画面 / entrance = 入口ディスプレイ / control = デモ用操作パネル
+export type ViewMode = 'phone' | 'entrance' | 'control';
