@@ -8,6 +8,7 @@ import type {
   SavedResult,
   Screen,
   SeismicInfo,
+  SelfResponsibilityEntry,
   ViewMode,
 } from './types';
 import { CHECKLIST_QUESTIONS, getDynamicQuestions } from './data/checklist';
@@ -55,9 +56,8 @@ function AppContent() {
     areaName: '',
     observedAt: null,
   });
-  const [entranceDisplayState, setEntranceDisplayState] =
-    useState<EntranceDisplayState>('diagnosing');
   const [priorCheck, setPriorCheck] = useState<PriorCheckRecord | null>(DEFAULT_PRIOR_CHECK);
+  const [selfEntries, setSelfEntries] = useState<SelfResponsibilityEntry[]>([]);
   const { state: gasAlarm, setNormal, setAlarmStatus } = useGasAlarm();
 
   const judgement = useMemo(
@@ -66,6 +66,16 @@ function AppContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [answers, gasAlarm.status],
   );
+
+  // 入口ディスプレイの表示は手動設定ではなく、判定結果から自動的に決まる。
+  // ・ホーム画面／チェックリスト中（＝まだ確認が終わっていない）は常に「診断中」
+  // ・確認が終わったら、結果が出た時点で必ず「入場可能」か「入場禁止」のどちらかになる
+  //   （HOLDのみ「入場禁止」。それ以外（routine/targeted/expert_review）は「入場可能」。
+  //   　「要追加確認・要専門家確認」でも診断自体は完了しているため、診断中のままにはしない）
+  const entranceDisplayState: EntranceDisplayState = useMemo(() => {
+    if (screen === 'home' || screen === 'checklist') return 'diagnosing';
+    return judgement.result === 'hold' ? 'denied' : 'allowed';
+  }, [screen, judgement.result]);
 
   function handleAnswerChange(questionId: string, value: AnswerValue, comment: string) {
     setAnswers((prev) =>
@@ -84,8 +94,6 @@ function AppContent() {
     setAnswers(createInitialAnswers());
     setSavedResult(null);
     setRecordId('');
-    // 入口ディスプレイも次の確認のために「診断中」へ戻す（自動切り替えはこの時のみ）
-    setEntranceDisplayState('diagnosing');
     setScreen('home');
   }
 
@@ -120,6 +128,16 @@ function AppContent() {
     // デモのため実際のビデオ通話は行わない。追加コメントはこの後の連携先へ渡すことを想定。
     setCaseNumber(generateCaseNumber());
     setScreen('expertCall');
+  }
+
+  // 診断前・診断中でも自己責任で建物に入場する人の記録を追加する
+  // （入室時刻は署名が完了した瞬間の時刻を自動で記録する）
+  function handleAddSelfEntry(entry: SelfResponsibilityEntry) {
+    setSelfEntries((prev) => [entry, ...prev]);
+  }
+
+  function handleRemoveSelfEntry(id: string) {
+    setSelfEntries((prev) => prev.filter((e) => e.id !== id));
   }
 
   const viewTabs: { id: ViewMode; label: string }[] = [
@@ -158,6 +176,9 @@ function AppContent() {
                 onBuildingInfoChange={setBuildingInfo}
                 onStart={handleStart}
                 onSeismicInfoChange={setSeismicInfo}
+                selfEntries={selfEntries}
+                onAddSelfEntry={handleAddSelfEntry}
+                onRemoveSelfEntry={handleRemoveSelfEntry}
               />
             )}
 
@@ -175,7 +196,6 @@ function AppContent() {
                 judgement={judgement}
                 savedResult={savedResult}
                 entranceDisplayState={entranceDisplayState}
-                onSetEntranceDisplay={setEntranceDisplayState}
                 onSaveResult={handleSaveResult}
                 onConsultExpert={handleConsultExpert}
                 onRestart={handleRestart}

@@ -92,6 +92,12 @@ export function generateRecordId(): string {
   return `REC-${n}`;
 }
 
+// 自己責任での入場記録用ID（例: ENTRY-4821）
+export function generateEntryId(): string {
+  const n = Math.floor(1000 + Math.random() * 9000);
+  return `ENTRY-${n}`;
+}
+
 // 「確認結果をアプリに保存」した際の自動整理メモ（テンプレートベース）
 export function buildSavedResultNote(judgement: JudgementDetail, lang: Lang): string {
   const t = translations[lang];

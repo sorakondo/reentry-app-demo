@@ -91,6 +91,24 @@ interface Translation {
     recordIdLabel: string;
     notCheckedText: string;
   };
+  selfEntry: {
+    sectionTitle: string;
+    description: string;
+    addButton: string;
+    emptyText: string;
+    nameLabel: string;
+    namePlaceholder: string;
+    roomLabel: string;
+    roomPlaceholder: string;
+    entryTimeLabel: string;
+    riskNotice: string;
+    modalTitle: string;
+    modalDesc: string;
+    nextButton: string;
+    cancelButton: string;
+    removeButton: string;
+    signedBadge: string;
+  };
   viewSwitcher: {
     phoneTab: string;
     entranceTab: string;
@@ -240,9 +258,9 @@ const ja: Translation = {
     buildingNameLabel: '建物名',
     checkedAtLabel: '確認日時',
     gasAlarmSectionTitle: 'ガス漏れ警報器',
-    gasAlarmNormal: '正常',
-    gasAlarmAlarm: 'ガス漏れ警報',
-    gasAlarmNoSignal: '通信なし',
+    gasAlarmNormal: 'ガス漏れ警報なし',
+    gasAlarmAlarm: 'ガス漏れ警報あり',
+    gasAlarmNoSignal: '接続なし',
     gasAlarmNormalDesc: '警報器からの最新データを受信しています',
     gasAlarmAlarmDesc: '警報器が異常を検知しています。ただちに避難してください。',
     gasAlarmNoSignalDesc: '警報器との通信が途絶えています。状態を確認できません。',
@@ -335,6 +353,26 @@ const ja: Translation = {
     savedAtLabel: '保存日時',
     recordIdLabel: '記録ID',
     notCheckedText: 'この建物はまだ確認されていません。',
+  },
+  selfEntry: {
+    sectionTitle: '自己責任での入場記録',
+    description:
+      '診断が完了する前でも、自己責任で建物に入る方の氏名・入室時刻・行き先・署名を記録できます。',
+    addButton: '＋ 入場記録を追加',
+    emptyText: 'まだ記録はありません。',
+    nameLabel: '氏名',
+    namePlaceholder: '例：山田 太郎',
+    roomLabel: '行き先の部屋',
+    roomPlaceholder: '例：3階 事務室',
+    entryTimeLabel: '入室時刻',
+    riskNotice:
+      '診断が完了していない建物への入場は危険を伴う可能性があります。自己責任での入場であることを理解のうえ、署名してください。',
+    modalTitle: '自己責任での入場記録',
+    modalDesc: '氏名と行き先を入力してください。次の画面で署名します。',
+    nextButton: '次へ（署名する）',
+    cancelButton: 'キャンセル',
+    removeButton: '削除',
+    signedBadge: '署名済み',
   },
   viewSwitcher: {
     phoneTab: '📱 スマホ',
@@ -541,8 +579,8 @@ const ja: Translation = {
     clearButton: 'クリア',
     completeSignButton: '署名して完了',
     cancelButton: 'キャンセル',
-    entranceControlSectionTitle: '入口ディスプレイの設定',
-    entranceControlDesc: '建物入口のディスプレイに表示する内容を決定してください。',
+    entranceControlSectionTitle: '入口ディスプレイの表示',
+    entranceControlDesc: '判定結果に応じて、建物入口のディスプレイの表示が自動的に切り替わります。',
     setEntranceAllowedButton: '入口を「入場可能」にする',
     setEntranceDeniedButton: '入口を「入場禁止」にする',
     setEntranceDiagnosingButton: '入口を「診断中」にする',
@@ -565,9 +603,9 @@ const en: Translation = {
     buildingNameLabel: 'Building',
     checkedAtLabel: 'Checked at',
     gasAlarmSectionTitle: 'Gas Leak Detector',
-    gasAlarmNormal: 'Normal',
-    gasAlarmAlarm: 'Gas Leak Alarm',
-    gasAlarmNoSignal: 'No Signal',
+    gasAlarmNormal: 'No Gas Alarm',
+    gasAlarmAlarm: 'Gas Alarm Active',
+    gasAlarmNoSignal: 'Not Connected',
     gasAlarmNormalDesc: 'Receiving the latest data from the detector',
     gasAlarmAlarmDesc:
       'The detector has detected an abnormality. Evacuate immediately.',
@@ -661,6 +699,26 @@ const en: Translation = {
     savedAtLabel: 'Saved at',
     recordIdLabel: 'Record ID',
     notCheckedText: 'This building has not been checked yet.',
+  },
+  selfEntry: {
+    sectionTitle: 'Self-Responsibility Entry Log',
+    description:
+      'Even before the check is complete, record the name, entry time, destination room, and signature of anyone entering the building at their own risk.',
+    addButton: '+ Add Entry Record',
+    emptyText: 'No records yet.',
+    nameLabel: 'Name',
+    namePlaceholder: 'e.g. Taro Yamada',
+    roomLabel: 'Destination room',
+    roomPlaceholder: 'e.g. 3F Office',
+    entryTimeLabel: 'Entry time',
+    riskNotice:
+      'Entering a building before the safety check is complete may be dangerous. By signing, you acknowledge you are entering at your own risk.',
+    modalTitle: 'Self-Responsibility Entry Record',
+    modalDesc: 'Enter the name and destination. You will sign on the next screen.',
+    nextButton: 'Next (Sign)',
+    cancelButton: 'Cancel',
+    removeButton: 'Remove',
+    signedBadge: 'Signed',
   },
   viewSwitcher: {
     phoneTab: '📱 Phone',
@@ -870,8 +928,8 @@ const en: Translation = {
     clearButton: 'Clear',
     completeSignButton: 'Sign & Complete',
     cancelButton: 'Cancel',
-    entranceControlSectionTitle: 'Entrance Display Setting',
-    entranceControlDesc: 'Decide what the entrance display should show.',
+    entranceControlSectionTitle: 'Entrance Display',
+    entranceControlDesc: 'The entrance display switches automatically based on the check result.',
     setEntranceAllowedButton: 'Set Entrance to "Allowed"',
     setEntranceDeniedButton: 'Set Entrance to "Prohibited"',
     setEntranceDiagnosingButton: 'Set Entrance to "Diagnosing"',

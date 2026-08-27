@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { GasAlarmState } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useScaleToFit } from '../hooks/useScaleToFit';
 
 interface PhoneFrameProps {
   children: ReactNode;
@@ -9,6 +10,12 @@ interface PhoneFrameProps {
   // 画面切り替えのたびに変わる値。スクロール位置を新しい画面の先頭にリセットするために使う。
   scrollResetKey?: string;
 }
+
+// スマホ画面の「基準サイズ」（縦長20:9）。中身は常にこのピクセル数でレイアウトし、
+// 拡大率に応じて全体を transform: scale() で縮小/拡大して見せる
+// （詳しい理由は useScaleToFit.ts のコメントを参照）。
+const REF_WIDTH = 405;
+const REF_HEIGHT = 900;
 
 /**
  * PCブラウザではスマートフォン程度の幅で中央表示し、
@@ -24,6 +31,7 @@ interface PhoneFrameProps {
  */
 export default function PhoneFrame({ children, gasAlarm, scrollResetKey }: PhoneFrameProps) {
   const { t, toggleLang } = useLanguage();
+  const { containerRef, scale } = useScaleToFit(REF_WIDTH, REF_HEIGHT);
 
   const alarmMeta = {
     normal: {
@@ -37,42 +45,55 @@ export default function PhoneFrame({ children, gasAlarm, scrollResetKey }: Phone
       className: 'border-red-300 bg-red-50 text-red-700',
     },
     noSignal: {
-      emoji: '⚪',
+      emoji: '\u{1F7E0}',
       text: t.home.gasAlarmNoSignal,
-      className: 'border-neutral-300 bg-neutral-100 text-neutral-500',
+      className: 'border-orange-300 bg-orange-50 text-orange-700',
     },
   }[gasAlarm.status];
 
   return (
-    <div className="flex h-full w-full items-center justify-center overflow-hidden bg-neutral-200 p-3 sm:p-6">
-      {/* スマホ本体（縦長20:9・黒枠付き）を模した外枠 */}
-      <div
-        className="relative mx-auto flex aspect-[9/20] h-full max-h-full w-auto max-w-[420px] flex-col overflow-hidden rounded-[2.5rem] border-8 border-neutral-900 bg-white shadow-2xl"
-        style={{
-          // 実機でのノッチ等の安全領域に配慮
-          paddingTop: 'env(safe-area-inset-top)',
-          paddingBottom: 'env(safe-area-inset-bottom)',
-        }}
-      >
-        <div className="flex shrink-0 items-center justify-between px-4 pt-3">
-          <div
-            className={`flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-bold ${alarmMeta.className}`}
-            aria-label={`${t.home.gasAlarmSectionTitle}: ${alarmMeta.text}`}
-          >
-            <span aria-hidden="true">{alarmMeta.emoji}</span>
-            <span>{alarmMeta.text}</span>
+    <div
+      ref={containerRef}
+      className="flex h-full w-full items-center justify-center overflow-hidden bg-neutral-200 p-3 sm:p-6"
+    >
+      {/* 拡大縮小後の見た目の大きさに合わせた外枠（中央寄せ・はみ出し防止用） */}
+      <div style={{ width: REF_WIDTH * scale, height: REF_HEIGHT * scale }}>
+        {/* スマホ本体（縦長20:9・黒枠付き）を模した枠。
+            常に REF_WIDTH×REF_HEIGHT の固定ピクセル数でレイアウトし、
+            transform: scale() で見た目の大きさだけを調整する
+           （画面拡大率が変わっても中身のレイアウトそのものは一切変化しないため崩れない）。 */}
+        <div
+          className="relative flex flex-col overflow-hidden rounded-[2.5rem] border-8 border-neutral-900 bg-white shadow-2xl"
+          style={{
+            width: REF_WIDTH,
+            height: REF_HEIGHT,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+            // 実機でのノッチ等の安全領域に配慮
+            paddingTop: 'env(safe-area-inset-top)',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+          }}
+        >
+          <div className="flex shrink-0 items-center justify-between px-4 pt-3">
+            <div
+              className={`flex shrink items-center gap-1 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-bold ${alarmMeta.className}`}
+              aria-label={`${t.home.gasAlarmSectionTitle}: ${alarmMeta.text}`}
+            >
+              <span aria-hidden="true">{alarmMeta.emoji}</span>
+              <span>{alarmMeta.text}</span>
+            </div>
+            <button
+              type="button"
+              onClick={toggleLang}
+              className="tap-target shrink-0 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-600 active:bg-neutral-100"
+              aria-label="Switch language / 言語を切り替え"
+            >
+              {t.common.langToggleLabel}
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={toggleLang}
-            className="tap-target rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-600 active:bg-neutral-100"
-            aria-label="Switch language / 言語を切り替え"
-          >
-            {t.common.langToggleLabel}
-          </button>
-        </div>
-        <div key={scrollResetKey} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          {children}
+          <div key={scrollResetKey} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+            {children}
+          </div>
         </div>
       </div>
     </div>

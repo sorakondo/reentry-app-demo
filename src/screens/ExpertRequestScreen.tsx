@@ -100,7 +100,11 @@ export default function ExpertRequestScreen({
           <div className="flex items-center justify-between">
             <dt className="text-neutral-500">{t.expertRequest.gasAlarmLabel}</dt>
             <dd className="font-bold text-neutral-900">
-              {gasAlarm.status === 'normal' ? t.home.gasAlarmNormal : t.home.gasAlarmAlarm}
+              {gasAlarm.status === 'normal'
+                ? t.home.gasAlarmNormal
+                : gasAlarm.status === 'alarm'
+                  ? t.home.gasAlarmAlarm
+                  : t.home.gasAlarmNoSignal}
             </dd>
           </div>
           <div className="flex items-center justify-between">

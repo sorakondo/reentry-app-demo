@@ -9,7 +9,6 @@ interface ResultScreenProps {
   judgement: JudgementDetail;
   savedResult: SavedResult | null;
   entranceDisplayState: EntranceDisplayState;
-  onSetEntranceDisplay: (state: EntranceDisplayState) => void;
   onSaveResult: () => void;
   onConsultExpert: () => void;
   onRestart: () => void;
@@ -25,7 +24,6 @@ export default function ResultScreen({
   judgement,
   savedResult,
   entranceDisplayState,
-  onSetEntranceDisplay,
   onSaveResult,
   onConsultExpert,
   onRestart,
@@ -50,14 +48,14 @@ export default function ResultScreen({
         <p className="mt-2 text-base text-neutral-600">{meta.description}</p>
       </section>
 
-      {/* 入口ディスプレイの表示設定 */}
+      {/* 入口ディスプレイの表示（判定結果に応じて自動的に切り替わる。手動設定はできない） */}
       <section className="mb-5 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
         <p className="mb-1 text-sm font-bold text-neutral-500">
           {t.expertCall.entranceControlSectionTitle}
         </p>
         <p className="mb-3 text-sm text-neutral-600">{t.expertCall.entranceControlDesc}</p>
 
-        <div className="mb-3 flex items-center justify-between text-sm">
+        <div className="flex items-center justify-between text-sm">
           <span className="text-neutral-500">{t.expertCall.entranceCurrentLabel}</span>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-bold ${
@@ -75,35 +73,6 @@ export default function ResultScreen({
                 : t.expertCall.entranceStatusDiagnosing}
           </span>
         </div>
-
-        <div className="flex gap-2">
-          <button
-            type="button"
-            disabled={judgement.result === 'hold'}
-            onClick={() => onSetEntranceDisplay('allowed')}
-            className="tap-target flex-1 rounded-xl border-2 border-green-300 bg-green-50 text-sm font-bold text-green-700 active:bg-green-100 disabled:cursor-not-allowed disabled:border-neutral-200 disabled:bg-neutral-100 disabled:text-neutral-400"
-          >
-            {t.expertCall.setEntranceAllowedButton}
-          </button>
-          <button
-            type="button"
-            onClick={() => onSetEntranceDisplay('diagnosing')}
-            className="tap-target flex-1 rounded-xl border-2 border-neutral-300 bg-white text-sm font-bold text-neutral-600 active:bg-neutral-100"
-          >
-            {t.expertCall.setEntranceDiagnosingButton}
-          </button>
-          <button
-            type="button"
-            onClick={() => onSetEntranceDisplay('denied')}
-            className="tap-target flex-1 rounded-xl border-2 border-red-300 bg-red-50 text-sm font-bold text-red-700 active:bg-red-100"
-          >
-            {t.expertCall.setEntranceDeniedButton}
-          </button>
-        </div>
-
-        {judgement.result === 'hold' && (
-          <p className="mt-2 text-xs font-bold text-red-500">{t.expertCall.entranceHoldNote}</p>
-        )}
       </section>
 
       {/* 確認完了の署名 */}

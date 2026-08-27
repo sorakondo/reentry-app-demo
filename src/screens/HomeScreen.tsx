@@ -1,11 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import type { BuildingInfo, PriorCheckRecord, SeismicInfo, SeismicScale } from '../types';
+import type {
+  BuildingInfo,
+  PriorCheckRecord,
+  SeismicInfo,
+  SeismicScale,
+  SelfResponsibilityEntry,
+} from '../types';
 import { formatDateTimeJP } from '../logic/expertReport';
 import { fetchNearbySeismicInfoMock, MANUAL_SCALE_VALUES } from '../logic/seismicInfo';
 import { getCongestionLevel, useExpertCapacity } from '../logic/useExpertCapacity';
 import { useLanguage } from '../i18n/LanguageContext';
 import BigButton from '../components/BigButton';
 import BuildingInfoModal from '../components/BuildingInfoModal';
+import SelfResponsibilityModal from '../components/SelfResponsibilityModal';
 
 interface HomeScreenProps {
   // この建物の確認が既に済んでいるかを示すデモ用の記録（操作パネルから切り替え可能）
@@ -14,6 +21,10 @@ interface HomeScreenProps {
   onBuildingInfoChange: (info: BuildingInfo) => void;
   onStart: () => void;
   onSeismicInfoChange: (info: SeismicInfo) => void;
+  // 診断前・診断中でも自己責任で建物に入場する人の記録
+  selfEntries: SelfResponsibilityEntry[];
+  onAddSelfEntry: (entry: SelfResponsibilityEntry) => void;
+  onRemoveSelfEntry: (id: string) => void;
 }
 
 const LOADING_INFO: SeismicInfo = {
@@ -29,11 +40,15 @@ export default function HomeScreen({
   onBuildingInfoChange,
   onStart,
   onSeismicInfoChange,
+  selfEntries,
+  onAddSelfEntry,
+  onRemoveSelfEntry,
 }: HomeScreenProps) {
   const { t, lang } = useLanguage();
   const [now, setNow] = useState(new Date());
   const [checkedAt] = useState(new Date());
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showSelfEntryModal, setShowSelfEntryModal] = useState(false);
 
   const [autoInfo, setAutoInfo] = useState<SeismicInfo>(LOADING_INFO);
   const [manualMode, setManualMode] = useState(false);
@@ -153,6 +168,77 @@ export default function HomeScreen({
           <p className="text-sm text-neutral-500">{t.priorCheck.notCheckedText}</p>
         )}
       </section>
+
+      {/* 診断前・診断中でも自己責任で建物に入場する人の記録 */}
+      <section className="mb-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+        <p className="mb-1 text-sm font-bold text-neutral-500">{t.selfEntry.sectionTitle}</p>
+        <p className="mb-3 text-sm text-neutral-500">{t.selfEntry.description}</p>
+
+        {selfEntries.length === 0 ? (
+          <p className="mb-3 text-sm text-neutral-500">{t.selfEntry.emptyText}</p>
+        ) : (
+          <ul className="mb-3 space-y-2">
+            {selfEntries.map((entry) => (
+              <li
+                key={entry.id}
+                className="rounded-xl border border-neutral-200 bg-white p-3"
+              >
+                <div className="mb-2 flex items-start justify-between gap-2">
+                  <p className="min-w-0 truncate text-base font-bold text-neutral-900">
+                    {entry.name}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveSelfEntry(entry.id)}
+                    className="shrink-0 text-xs font-bold text-neutral-400 underline underline-offset-2"
+                  >
+                    {t.selfEntry.removeButton}
+                  </button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={entry.signatureDataUrl}
+                    alt={t.selfEntry.signedBadge}
+                    className="h-12 w-20 shrink-0 rounded-lg border border-neutral-200 bg-white object-contain"
+                  />
+                  <dl className="min-w-0 flex-1 space-y-0.5 text-sm">
+                    <div className="flex items-center justify-between gap-2">
+                      <dt className="shrink-0 text-neutral-500">{t.selfEntry.roomLabel}</dt>
+                      <dd className="text-right font-bold text-neutral-900">{entry.room}</dd>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <dt className="shrink-0 text-neutral-500">
+                        {t.selfEntry.entryTimeLabel}
+                      </dt>
+                      <dd className="text-right font-bold text-neutral-900">
+                        {formatDateTimeJP(entry.enteredAt, lang)}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setShowSelfEntryModal(true)}
+          className="tap-target w-full rounded-xl border-2 border-dashed border-neutral-300 bg-white text-base font-bold text-neutral-700 active:bg-neutral-100"
+        >
+          {t.selfEntry.addButton}
+        </button>
+      </section>
+
+      {showSelfEntryModal && (
+        <SelfResponsibilityModal
+          onSave={(entry) => {
+            onAddSelfEntry(entry);
+            setShowSelfEntryModal(false);
+          }}
+          onClose={() => setShowSelfEntryModal(false)}
+        />
+      )}
 
       <section className="relative mb-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
         <div className="mb-2 flex items-center justify-between">

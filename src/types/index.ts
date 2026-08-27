@@ -140,6 +140,16 @@ export interface PriorCheckRecord {
   recordId: string;
 }
 
+// 診断が完了する前でも、自己責任で建物に入場する人の記録
+// （氏名・行き先の部屋・入室時刻・手書き署名を保存する）
+export interface SelfResponsibilityEntry {
+  id: string;
+  name: string;
+  room: string;
+  enteredAt: Date;
+  signatureDataUrl: string;
+}
+
 // デモ用の3つの「画面（デバイス）」切り替え
 // phone = スマホ画面 / entrance = 入口ディスプレイ / control = デモ用操作パネル
 export type ViewMode = 'phone' | 'entrance' | 'control';
