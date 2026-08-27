@@ -62,10 +62,7 @@ export default function ResultScreen({
 
         {signature.signed && signature.text && (
           <div className="mb-3 flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3">
-            <p
-              className="flex-1 truncate text-2xl italic text-neutral-900"
-              style={{ fontFamily: "'Noto Serif JP', 'Yu Mincho', serif" }}
-            >
+            <p className="flex-1 truncate text-lg font-bold text-neutral-900">
               {signature.text}
             </p>
             {signature.signedAt && (

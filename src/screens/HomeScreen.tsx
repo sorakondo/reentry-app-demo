@@ -184,8 +184,7 @@ export default function HomeScreen({
                 </div>
                 <div className="flex items-center gap-3">
                   <p
-                    className="w-20 shrink-0 truncate rounded-lg border border-neutral-200 bg-white px-2 py-1 text-center text-base italic text-neutral-900"
-                    style={{ fontFamily: "'Noto Serif JP', 'Yu Mincho', serif" }}
+                    className="w-20 shrink-0 truncate rounded-lg border border-neutral-200 bg-white px-2 py-1 text-center text-base font-bold text-neutral-900"
                     title={entry.signatureText}
                   >
                     {entry.signatureText}

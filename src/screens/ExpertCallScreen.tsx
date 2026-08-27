@@ -182,13 +182,7 @@ export default function ExpertCallScreen({
             ))}
           </div>
         )}
-
-        <p className="mt-3 text-xs text-neutral-400">{t.expertCall.photoDemoNote}</p>
       </section>
-
-      <p className="mb-6 rounded-xl bg-neutral-100 p-3 text-sm leading-relaxed text-neutral-500">
-        {t.expertCall.demoNote}
-      </p>
 
       <div className="mt-auto">
         <BigButton variant="danger" onClick={onEndCall}>
