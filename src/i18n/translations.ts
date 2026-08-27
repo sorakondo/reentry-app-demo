@@ -255,6 +255,11 @@ interface Translation {
     entranceStatusDenied: string;
     entranceHoldNote: string;
   };
+  expertDecision: {
+    title: string;
+    description: string;
+    signRequiredNote: string;
+  };
 }
 
 const ja: Translation = {
@@ -263,7 +268,7 @@ const ja: Translation = {
     buildingName: '○○ビル',
   },
   home: {
-    appTitle: '災害後 建物再入場確認',
+    appTitle: '建物再入場確認',
     appSubtitle: '建物の安全状態を確認します',
     buildingNameLabel: '建物名',
     checkedAtLabel: '確認日時',
@@ -575,7 +580,7 @@ const ja: Translation = {
     callIdLabel: '通話ID',
     buildingLabel: '建物名',
     demoNote: 'これは研究発表用のデモです。実際のビデオ通話は行われていません。',
-    endCallButton: '通話を終了してホームに戻る',
+    endCallButton: '通話を終了する',
     photoSectionTitle: '専門家へ写真を送る',
     photoSectionDesc: '現場の状況が伝わる写真があれば、通話中に専門家へ送ることができます。',
     selectPhotoButton: '写真を選択して送る',
@@ -605,6 +610,11 @@ const ja: Translation = {
     entranceStatusAllowed: '入場可能',
     entranceStatusDenied: '入場禁止',
     entranceHoldNote: 'HOLD（再入場禁止）の判定のため、「入場可能」は選択できません。',
+  },
+  expertDecision: {
+    title: '入場可否の判定',
+    description: '専門家との通話内容をもとに、この建物への入場可否を決定してください。',
+    signRequiredNote: '決定ボタンを押すには、先に署名をしてください。',
   },
 };
 
@@ -929,7 +939,7 @@ const en: Translation = {
     buildingLabel: 'Building',
     demoNote:
       'This is a demo for a research presentation. No actual video call is taking place.',
-    endCallButton: 'End call and return home',
+    endCallButton: 'End Call',
     photoSectionTitle: 'Send Photos to the Expert',
     photoSectionDesc:
       'If you have photos that show the situation on site, you can send them to the expert during the call.',
@@ -960,6 +970,12 @@ const en: Translation = {
     entranceStatusAllowed: 'Entry Allowed',
     entranceStatusDenied: 'Entry Prohibited',
     entranceHoldNote: '"Allowed" cannot be selected because the result is HOLD (do not re-enter).',
+  },
+  expertDecision: {
+    title: 'Entry Decision',
+    description:
+      'Based on the call with the expert, decide whether entry to this building is allowed.',
+    signRequiredNote: 'Please sign before you can press a decision button.',
   },
 };
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { EntranceDisplayState, JudgementDetail, SavedResult, SignatureState } from '../types';
+import type { JudgementDetail, SavedResult, SignatureState } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
 import { formatDateTimeJP } from '../logic/expertReport';
 import BigButton from '../components/BigButton';
@@ -8,7 +8,6 @@ import SignaturePad from '../components/SignaturePad';
 interface ResultScreenProps {
   judgement: JudgementDetail;
   savedResult: SavedResult | null;
-  entranceDisplayState: EntranceDisplayState;
   onSaveResult: () => void;
   onConsultExpert: () => void;
   onRestart: () => void;
@@ -23,7 +22,6 @@ const INITIAL_SIGNATURE: SignatureState = {
 export default function ResultScreen({
   judgement,
   savedResult,
-  entranceDisplayState,
   onSaveResult,
   onConsultExpert,
   onRestart,
@@ -46,33 +44,6 @@ export default function ResultScreen({
         <div className="mb-2 text-5xl leading-none">{meta.emoji}</div>
         <h1 className={`text-3xl font-extrabold ${meta.textClass}`}>{meta.title}</h1>
         <p className="mt-2 text-base text-neutral-600">{meta.description}</p>
-      </section>
-
-      {/* 入口ディスプレイの表示（判定結果に応じて自動的に切り替わる。手動設定はできない） */}
-      <section className="mb-5 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-        <p className="mb-1 text-sm font-bold text-neutral-500">
-          {t.expertCall.entranceControlSectionTitle}
-        </p>
-        <p className="mb-3 text-sm text-neutral-600">{t.expertCall.entranceControlDesc}</p>
-
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-neutral-500">{t.expertCall.entranceCurrentLabel}</span>
-          <span
-            className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-              entranceDisplayState === 'allowed'
-                ? 'bg-green-100 text-green-700'
-                : entranceDisplayState === 'denied'
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-neutral-200 text-neutral-600'
-            }`}
-          >
-            {entranceDisplayState === 'allowed'
-              ? t.expertCall.entranceStatusAllowed
-              : entranceDisplayState === 'denied'
-                ? t.expertCall.entranceStatusDenied
-                : t.expertCall.entranceStatusDiagnosing}
-          </span>
-        </div>
       </section>
 
       {/* 確認完了の署名 */}

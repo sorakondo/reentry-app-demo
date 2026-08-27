@@ -112,10 +112,17 @@ export default function HomeScreen({
 
   return (
     <div className="flex flex-1 flex-col px-5 pb-6 pt-2">
-      <header className="mb-6">
+      <header className="mb-6 flex items-center justify-between gap-2">
         <h1 className="text-2xl font-bold leading-tight text-neutral-900">
           {t.home.appTitle}
         </h1>
+        <button
+          type="button"
+          onClick={() => setShowSettingsModal(true)}
+          className="tap-target shrink-0 rounded-full border border-neutral-300 bg-white px-3 text-xs font-bold text-neutral-600 active:bg-neutral-100"
+        >
+          {'⚙️'} {t.buildingInfo.settingsButton}
+        </button>
       </header>
 
       {/* この建物の確認が既に済んでいるかを示すデモ用の記録カード */}
@@ -219,18 +226,6 @@ export default function HomeScreen({
           onClose={() => setShowSelfEntryModal(false)}
         />
       )}
-
-      {/* 建物・現場情報：内容は表示せず、設定ボタンのみ。詳細は開始時の確認ポップアップで確認する */}
-      <section className="mb-4 flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-        <p className="text-sm font-bold text-neutral-500">{t.buildingInfo.sectionTitle}</p>
-        <button
-          type="button"
-          onClick={() => setShowSettingsModal(true)}
-          className="tap-target rounded-full border border-neutral-300 bg-white px-3 text-xs font-bold text-neutral-600 active:bg-neutral-100"
-        >
-          {'⚙️'} {t.buildingInfo.settingsButton}
-        </button>
-      </section>
 
       {showSettingsModal && (
         <BuildingInfoModal

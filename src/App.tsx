@@ -29,6 +29,7 @@ import ChecklistScreen from './screens/ChecklistScreen';
 import ResultScreen from './screens/ResultScreen';
 import ExpertRequestScreen from './screens/ExpertRequestScreen';
 import ExpertCallScreen from './screens/ExpertCallScreen';
+import ExpertDecisionScreen from './screens/ExpertDecisionScreen';
 import EntranceDisplayScreen from './screens/EntranceDisplayScreen';
 import ControlPanelScreen from './screens/ControlPanelScreen';
 
@@ -58,6 +59,12 @@ function AppContent() {
   });
   const [priorCheck, setPriorCheck] = useState<PriorCheckRecord | null>(DEFAULT_PRIOR_CHECK);
   const [selfEntries, setSelfEntries] = useState<SelfResponsibilityEntry[]>([]);
+  // 専門家とのビデオ通話後の入場可否決定画面で手動決定した結果。
+  // 通常は判定結果（judgement）から自動的に入口ディスプレイの表示が決まるが、
+  // 専門家が最終決定した場合はその結果を優先して表示する。
+  const [manualEntranceOverride, setManualEntranceOverride] = useState<
+    'allowed' | 'denied' | null
+  >(null);
   const { state: gasAlarm, setNormal, setAlarmStatus } = useGasAlarm();
 
   const judgement = useMemo(
@@ -73,9 +80,12 @@ function AppContent() {
   //   （HOLDのみ「入場禁止」。それ以外（routine/targeted/expert_review）は「入場可能」。
   //   　「要追加確認・要専門家確認」でも診断自体は完了しているため、診断中のままにはしない）
   const entranceDisplayState: EntranceDisplayState = useMemo(() => {
+    // 専門家が通話後に手動で決定した入場可否は、次の確認が始まる（handleStart）まで
+    // 画面遷移に関わらず優先して表示し続ける（例：決定後にホーム画面へ戻っても保持される）
+    if (manualEntranceOverride) return manualEntranceOverride;
     if (screen === 'home' || screen === 'checklist') return 'diagnosing';
     return judgement.result === 'hold' ? 'denied' : 'allowed';
-  }, [screen, judgement.result]);
+  }, [screen, judgement.result, manualEntranceOverride]);
 
   function handleAnswerChange(questionId: string, value: AnswerValue, comment: string) {
     setAnswers((prev) =>
@@ -85,6 +95,8 @@ function AppContent() {
 
   function handleStart() {
     setCheckedAt(new Date());
+    // 前回確認時に専門家が手動決定した入口表示が残らないよう、新しい確認の開始時にリセットする
+    setManualEntranceOverride(null);
     setScreen('checklist');
   }
 
@@ -128,6 +140,17 @@ function AppContent() {
     // デモのため実際のビデオ通話は行わない。追加コメントはこの後の連携先へ渡すことを想定。
     setCaseNumber(generateCaseNumber());
     setScreen('expertCall');
+  }
+
+  function handleEndCall() {
+    // 通話終了後は直接ホームに戻さず、入場可否を決定する画面へ進む
+    // （このページは専門家との通話を行った場合にのみ表示される）
+    setScreen('expertDecision');
+  }
+
+  function handleExpertDecision(result: 'allowed' | 'denied') {
+    setManualEntranceOverride(result);
+    handleRestart();
   }
 
   // 診断前・診断中でも自己責任で建物に入場する人の記録を追加する
@@ -199,7 +222,6 @@ function AppContent() {
               <ResultScreen
                 judgement={judgement}
                 savedResult={savedResult}
-                entranceDisplayState={entranceDisplayState}
                 onSaveResult={handleSaveResult}
                 onConsultExpert={handleConsultExpert}
                 onRestart={handleRestart}
@@ -222,8 +244,12 @@ function AppContent() {
               <ExpertCallScreen
                 caseNumber={caseNumber}
                 recordId={recordId}
-                onEndCall={handleRestart}
+                onEndCall={handleEndCall}
               />
+            )}
+
+            {screen === 'expertDecision' && (
+              <ExpertDecisionScreen onDecide={handleExpertDecision} />
             )}
           </PhoneFrame>
         )}

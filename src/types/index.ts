@@ -65,7 +65,8 @@ export type Screen =
   | 'checklist'
   | 'result'
   | 'expertRequest'
-  | 'expertCall';
+  | 'expertCall'
+  | 'expertDecision';
 
 // 建物の構造種別
 export type StructureType = 'RC' | 'S' | 'wood' | 'other';
