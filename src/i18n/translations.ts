@@ -21,6 +21,10 @@ interface Translation {
     gasAlarmNormal: string;
     gasAlarmAlarm: string;
     gasAlarmNoSignal: string;
+    // 画面左上の小さなバッジ専用の短い表記（英語版で1行に収まるように、正式名称より短くする）
+    gasAlarmNormalBadge: string;
+    gasAlarmAlarmBadge: string;
+    gasAlarmNoSignalBadge: string;
     gasAlarmNormalDesc: string;
     gasAlarmAlarmDesc: string;
     gasAlarmNoSignalDesc: string;
@@ -129,6 +133,10 @@ interface Translation {
     deniedTitle: string;
     deniedDesc: string;
     footerNote: string;
+    // 画面左上の小さなバッジ専用の短い表記（英語版で1行に収まるように、正式名称より短くする）
+    diagnosingBadge: string;
+    allowedBadge: string;
+    deniedBadge: string;
   };
   controlPanel: {
     title: string;
@@ -276,6 +284,9 @@ const ja: Translation = {
     gasAlarmNormal: 'ガス漏れ警報なし',
     gasAlarmAlarm: 'ガス漏れ警報あり',
     gasAlarmNoSignal: '接続なし',
+    gasAlarmNormalBadge: 'ガス漏れ警報なし',
+    gasAlarmAlarmBadge: 'ガス漏れ警報あり',
+    gasAlarmNoSignalBadge: '接続なし',
     gasAlarmNormalDesc: '警報器からの最新データを受信しています',
     gasAlarmAlarmDesc: '警報器が異常を検知しています。ただちに避難してください。',
     gasAlarmNoSignalDesc: '警報器との通信が途絶えています。状態を確認できません。',
@@ -410,6 +421,9 @@ const ja: Translation = {
     deniedTitle: '入場禁止',
     deniedDesc: '建物への再入場は禁止されています。立ち入らないでください。',
     footerNote: 'これは建物入口に設置される案内表示のデモです。',
+    diagnosingBadge: '診断中',
+    allowedBadge: '入場可能',
+    deniedBadge: '入場禁止',
   },
   controlPanel: {
     title: 'デモ用 操作パネル',
@@ -632,6 +646,9 @@ const en: Translation = {
     gasAlarmNormal: 'No Gas Alarm',
     gasAlarmAlarm: 'Gas Alarm Active',
     gasAlarmNoSignal: 'Not Connected',
+    gasAlarmNormalBadge: 'No Alarm',
+    gasAlarmAlarmBadge: 'Alarm Active',
+    gasAlarmNoSignalBadge: 'Offline',
     gasAlarmNormalDesc: 'Receiving the latest data from the detector',
     gasAlarmAlarmDesc:
       'The detector has detected an abnormality. Evacuate immediately.',
@@ -767,6 +784,9 @@ const en: Translation = {
     deniedTitle: 'Entry Prohibited',
     deniedDesc: 'Re-entry into the building is prohibited. Do not enter.',
     footerNote: 'This is a demo of the sign displayed at the building entrance.',
+    diagnosingBadge: 'Diagnosing',
+    allowedBadge: 'Allowed',
+    deniedBadge: 'Denied',
   },
   controlPanel: {
     title: 'Demo Control Panel',

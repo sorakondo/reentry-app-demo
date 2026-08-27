@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type {
+  AlarmStatus,
   Answer,
   AnswerValue,
   BuildingInfo,
@@ -33,10 +34,21 @@ import ExpertDecisionScreen from './screens/ExpertDecisionScreen';
 import EntranceDisplayScreen from './screens/EntranceDisplayScreen';
 import ControlPanelScreen from './screens/ControlPanelScreen';
 
-function createInitialAnswers(): Answer[] {
+// 「火災警報・消火設備に異常がありますか？」は、現在のガス漏れ警報器の状態から
+// 妥当な初期値を推定して事前に選択しておく（ユーザーは後から自由に変更できる）。
+// ・ガス漏れ警報あり → 建物側の異常が疑われるため「はい（異常あり）」を初期値に
+// ・警報器との通信なし → 現場で確認できないため「判断できない」を初期値に
+// ・警報なし（正常） → 「いいえ（異常なし）」を初期値に
+function defaultFireEquipmentAnswer(gasAlarmStatus: AlarmStatus): AnswerValue {
+  if (gasAlarmStatus === 'alarm') return 'yes';
+  if (gasAlarmStatus === 'noSignal') return 'unknown';
+  return 'no';
+}
+
+function createInitialAnswers(gasAlarmStatus: AlarmStatus): Answer[] {
   return CHECKLIST_QUESTIONS.map((q) => ({
     questionId: q.id,
-    value: null,
+    value: q.id === 'q9_fire' ? defaultFireEquipmentAnswer(gasAlarmStatus) : null,
     comment: '',
   }));
 }
@@ -45,7 +57,7 @@ function AppContent() {
   const { t, lang } = useLanguage();
   const [view, setView] = useState<ViewMode>('phone');
   const [screen, setScreen] = useState<Screen>('home');
-  const [answers, setAnswers] = useState<Answer[]>(createInitialAnswers());
+  const [answers, setAnswers] = useState<Answer[]>(createInitialAnswers('normal'));
   const [checkedAt, setCheckedAt] = useState<Date>(new Date());
   const [caseNumber, setCaseNumber] = useState<string>('');
   const [recordId, setRecordId] = useState<string>('');
@@ -97,13 +109,15 @@ function AppContent() {
     setCheckedAt(new Date());
     // 前回確認時に専門家が手動決定した入口表示が残らないよう、新しい確認の開始時にリセットする
     setManualEntranceOverride(null);
+    // 確認開始時点の最新のガス漏れ警報器の状態をもとに、火災警報・消火設備の項目の初期値を決め直す
+    setAnswers(createInitialAnswers(gasAlarm.status));
     setScreen('checklist');
   }
 
   function handleRestart() {
     // デモ用に切り替えたガス漏れ警報器の状態も、次の確認のために「正常」へ戻す
     setNormal();
-    setAnswers(createInitialAnswers());
+    setAnswers(createInitialAnswers('normal'));
     setSavedResult(null);
     setRecordId('');
     setScreen('home');

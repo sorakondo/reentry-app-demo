@@ -7,7 +7,7 @@ export const MANUAL_SCALE_VALUES: Exclude<SeismicScale, null>[] = [
 
 // デモ用の固定モックデータ。実際の位置情報や外部APIへの通信は一切行わない。
 // 「取得しているように見せる」ため、呼び出し側で短い遅延（ローディング表示）を演出する。
-const MOCK_SCALE: Exclude<SeismicScale, null> = 30; // 震度3
+const MOCK_SCALE: Exclude<SeismicScale, null> = 45; // 震度5弱
 const MOCK_AREA_NAME = '東京都千代田区';
 const MOCK_DELAY_MS = 1200;
 

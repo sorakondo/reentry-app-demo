@@ -40,20 +40,22 @@ export default function PhoneFrame({
   const { t, toggleLang } = useLanguage();
   const { containerRef, scale } = useScaleToFit(REF_WIDTH, REF_HEIGHT);
 
+  // バッジは幅が限られるため、正式名称（他画面で使用）とは別の短い表記を使う
+  // （英語版でも1行に収まるようにするため）
   const alarmMeta = {
     normal: {
       emoji: '\u{1F7E2}',
-      text: t.home.gasAlarmNormal,
+      text: t.home.gasAlarmNormalBadge,
       className: 'border-green-300 bg-green-50 text-green-700',
     },
     alarm: {
       emoji: '\u{1F534}',
-      text: t.home.gasAlarmAlarm,
+      text: t.home.gasAlarmAlarmBadge,
       className: 'border-red-300 bg-red-50 text-red-700',
     },
     noSignal: {
       emoji: '\u{1F7E0}',
-      text: t.home.gasAlarmNoSignal,
+      text: t.home.gasAlarmNoSignalBadge,
       className: 'border-orange-600 bg-orange-100 text-orange-800',
     },
   }[gasAlarm.status];
@@ -62,17 +64,17 @@ export default function PhoneFrame({
   const entranceMeta = {
     diagnosing: {
       emoji: '⏳',
-      text: t.entranceDisplay.diagnosingTitle,
+      text: t.entranceDisplay.diagnosingBadge,
       className: 'border-neutral-300 bg-neutral-100 text-neutral-600',
     },
     allowed: {
       emoji: '✅',
-      text: t.entranceDisplay.allowedTitle,
+      text: t.entranceDisplay.allowedBadge,
       className: 'border-green-300 bg-green-50 text-green-700',
     },
     denied: {
       emoji: '⛔',
-      text: t.entranceDisplay.deniedTitle,
+      text: t.entranceDisplay.deniedBadge,
       className: 'border-red-300 bg-red-50 text-red-700',
     },
   }[entranceDisplayState];
