@@ -1,30 +1,36 @@
 import { useMemo, useState } from 'react';
-import type { GasAlarmState, JudgementDetail } from '../types';
+import type { BuildingInfo, GasAlarmState, JudgementDetail, SeismicInfo } from '../types';
 import {
   buildOverallSummaryText,
   buildQuestionSummaryText,
+  buildSeismicSummarySentence,
   formatDateTimeJP,
 } from '../logic/expertReport';
 import { useLanguage } from '../i18n/LanguageContext';
+import { getCongestionLevel, useExpertCapacity } from '../logic/useExpertCapacity';
 import BigButton from '../components/BigButton';
 
 interface ExpertRequestScreenProps {
   checkedAt: Date;
   gasAlarm: GasAlarmState;
+  seismicInfo: SeismicInfo;
+  buildingInfo: BuildingInfo;
   judgement: JudgementDetail;
-  onSend: (extraComment: string) => void;
+  onStartCall: (extraComment: string) => void;
   onBack: () => void;
 }
 
 export default function ExpertRequestScreen({
   checkedAt,
   gasAlarm,
+  seismicInfo,
+  buildingInfo,
   judgement,
-  onSend,
+  onStartCall,
   onBack,
 }: ExpertRequestScreenProps) {
   const { t, lang } = useLanguage();
-  const [sending, setSending] = useState(false);
+  const [connecting, setConnecting] = useState(false);
   const [extraComment, setExtraComment] = useState('');
 
   const overallText = useMemo(
@@ -32,12 +38,44 @@ export default function ExpertRequestScreen({
     [judgement.unknownItems.length, lang],
   );
 
-  function handleSend() {
-    setSending(true);
-    // デモ: 実際の通信は行わず、送信中の演出のみ
+  const seismicSentence = useMemo(
+    () => buildSeismicSummarySentence(seismicInfo, lang),
+    [seismicInfo, lang],
+  );
+
+  const seismicDisplayLabel =
+    seismicInfo.status === 'auto_no_data'
+      ? t.seismic.statusNoData
+      : seismicInfo.status === 'auto_failed' || seismicInfo.scale === null
+        ? t.seismic.manualNotSet
+        : t.seismic.scaleLabel(seismicInfo.scale);
+
+  const { occupied, total } = useExpertCapacity();
+  const congestion = getCongestionLevel(occupied, total);
+  const congestionMeta = {
+    available: {
+      barClass: 'bg-green-500',
+      textClass: 'text-green-700',
+      statusText: t.expertCapacity.statusAvailable,
+    },
+    moderate: {
+      barClass: 'bg-amber-500',
+      textClass: 'text-amber-700',
+      statusText: t.expertCapacity.statusModerate,
+    },
+    congested: {
+      barClass: 'bg-red-500',
+      textClass: 'text-red-700',
+      statusText: t.expertCapacity.statusCongested,
+    },
+  }[congestion];
+
+  function handleStartCall() {
+    setConnecting(true);
+    // デモ: 実際の通信は行わず、接続中の演出のみ
     setTimeout(() => {
-      onSend(extraComment);
-    }, 900);
+      onStartCall(extraComment);
+    }, 1100);
   }
 
   return (
@@ -63,6 +101,55 @@ export default function ExpertRequestScreen({
             <dt className="text-neutral-500">{t.expertRequest.gasAlarmLabel}</dt>
             <dd className="font-bold text-neutral-900">
               {gasAlarm.status === 'normal' ? t.home.gasAlarmNormal : t.home.gasAlarmAlarm}
+            </dd>
+          </div>
+          <div className="flex items-center justify-between">
+            <dt className="text-neutral-500">{t.expertRequest.seismicLabel}</dt>
+            <dd className="text-right font-bold text-neutral-900">
+              {seismicDisplayLabel}
+              {seismicInfo.areaName && (
+                <span className="block text-xs font-normal text-neutral-400">
+                  {seismicInfo.areaName}
+                </span>
+              )}
+            </dd>
+          </div>
+          <div className="flex items-center justify-between">
+            <dt className="text-neutral-500">{t.buildingInfo.ageLabel}</dt>
+            <dd className="font-bold text-neutral-900">
+              {buildingInfo.ageYears !== null
+                ? `${buildingInfo.ageYears}${t.buildingInfo.ageUnit}`
+                : t.buildingInfo.notSet}
+            </dd>
+          </div>
+          <div className="flex items-center justify-between">
+            <dt className="text-neutral-500">{t.buildingInfo.locationLabel}</dt>
+            <dd className="max-w-[65%] text-right font-bold text-neutral-900">
+              {buildingInfo.location || t.buildingInfo.notSet}
+            </dd>
+          </div>
+          <div className="flex items-center justify-between">
+            <dt className="text-neutral-500">{t.buildingInfo.floorsLabel}</dt>
+            <dd className="font-bold text-neutral-900">
+              {buildingInfo.floors !== null
+                ? `${buildingInfo.floors}${t.buildingInfo.floorsUnit}`
+                : t.buildingInfo.notSet}
+            </dd>
+          </div>
+          <div className="flex items-center justify-between">
+            <dt className="text-neutral-500">{t.buildingInfo.structureTypeLabel}</dt>
+            <dd className="font-bold text-neutral-900">
+              {buildingInfo.structureType
+                ? t.buildingInfo.structureTypeOptions[buildingInfo.structureType]
+                : t.buildingInfo.notSet}
+            </dd>
+          </div>
+          <div className="flex items-center justify-between">
+            <dt className="text-neutral-500">{t.buildingInfo.floorAreaLabel}</dt>
+            <dd className="font-bold text-neutral-900">
+              {buildingInfo.floorAreaSqm !== null
+                ? `${buildingInfo.floorAreaSqm.toLocaleString()}${t.buildingInfo.floorAreaUnit}`
+                : t.buildingInfo.notSet}
             </dd>
           </div>
         </dl>
@@ -97,6 +184,7 @@ export default function ExpertRequestScreen({
         <h2 className="mb-2 text-sm font-bold text-neutral-500">
           {t.expertRequest.autoSummarySectionTitle}
         </h2>
+        <p className="mb-1 text-base leading-relaxed text-neutral-800">{seismicSentence}</p>
         <p className="mb-3 text-base leading-relaxed text-neutral-800">{overallText}</p>
         {judgement.unknownItems.length > 0 && (
           <div className="space-y-3">
@@ -131,11 +219,39 @@ export default function ExpertRequestScreen({
         />
       </section>
 
+      {/* 専門家テレビ電話の対応状況 */}
+      <section className="mb-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+        <div className="mb-1 flex items-center justify-between">
+          <p className="text-sm font-bold text-neutral-500">
+            {t.expertCapacity.sectionTitle}
+          </p>
+          <span
+            className={`text-lg font-extrabold tabular-nums ${congestionMeta.textClass}`}
+          >
+            {occupied}
+            <span className="text-sm font-bold text-neutral-400">
+              {t.expertCapacity.unitSeparator}
+              {total}
+            </span>
+          </span>
+        </div>
+        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-neutral-200">
+          <div
+            className={`h-full rounded-full transition-all ${congestionMeta.barClass}`}
+            style={{ width: `${Math.min(100, (occupied / total) * 100)}%` }}
+          />
+        </div>
+        <p className="mt-2 text-xs text-neutral-500">{t.expertCapacity.description}</p>
+        <p className={`mt-1 text-sm font-bold ${congestionMeta.textClass}`}>
+          {congestionMeta.statusText}
+        </p>
+      </section>
+
       <div className="mt-auto space-y-3">
-        <BigButton onClick={handleSend} disabled={sending} className="text-lg">
-          {sending ? t.expertRequest.sendingButton : t.expertRequest.sendButton}
+        <BigButton onClick={handleStartCall} disabled={connecting} className="text-lg">
+          {connecting ? t.expertRequest.connectingButton : t.expertRequest.callButton}
         </BigButton>
-        <BigButton variant="secondary" onClick={onBack} disabled={sending}>
+        <BigButton variant="secondary" onClick={onBack} disabled={connecting}>
           {t.expertRequest.backButton}
         </BigButton>
       </div>

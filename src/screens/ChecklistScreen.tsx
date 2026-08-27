@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Answer, AnswerValue, ChecklistQuestion } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
 import BigButton from '../components/BigButton';
@@ -20,6 +20,7 @@ export default function ChecklistScreen({
 }: ChecklistScreenProps) {
   const { t } = useLanguage();
   const [index, setIndex] = useState(0);
+  const topRef = useRef<HTMLDivElement>(null);
   const total = questions.length;
   const question = questions[index];
   const qText = t.questions[question.id];
@@ -28,6 +29,11 @@ export default function ChecklistScreen({
   const comment = current?.comment ?? '';
 
   const isLast = index === total - 1;
+
+  // 質問が切り替わるたびに、スクロール位置を画面の先頭へ戻す
+  useEffect(() => {
+    topRef.current?.scrollIntoView({ block: 'start' });
+  }, [index]);
 
   const ANSWER_OPTIONS: { value: AnswerValue; label: string; hint: string }[] = [
     { value: 'yes', label: t.checklist.answerYes, hint: t.checklist.answerYesHint },
@@ -67,7 +73,7 @@ export default function ChecklistScreen({
   }
 
   return (
-    <div className="flex flex-1 flex-col px-5 pb-6 pt-2">
+    <div ref={topRef} className="flex flex-1 flex-col px-5 pb-6 pt-2">
       <div className="mb-4">
         <div className="mb-2 flex items-center justify-between text-sm font-bold text-neutral-500">
           <span>{t.checklist.progress(index + 1, total)}</span>
@@ -101,9 +107,9 @@ export default function ChecklistScreen({
                 className={`tap-target w-full rounded-2xl border-2 px-5 py-4 text-left text-lg font-bold transition-colors ${
                   isSelected
                     ? opt.value === 'yes'
-                      ? 'border-green-600 bg-green-50 text-green-700'
+                      ? 'border-red-600 bg-red-50 text-red-700'
                       : opt.value === 'no'
-                        ? 'border-red-600 bg-red-50 text-red-700'
+                        ? 'border-green-600 bg-green-50 text-green-700'
                         : 'border-amber-500 bg-amber-50 text-amber-700'
                     : 'border-neutral-200 bg-white text-neutral-800 active:bg-neutral-50'
                 }`}

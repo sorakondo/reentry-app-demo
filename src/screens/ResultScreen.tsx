@@ -1,19 +1,24 @@
-import type { JudgementDetail } from '../types';
+import type { JudgementDetail, SavedResult } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
+import { formatDateTimeJP } from '../logic/expertReport';
 import BigButton from '../components/BigButton';
 
 interface ResultScreenProps {
   judgement: JudgementDetail;
+  savedResult: SavedResult | null;
+  onSaveResult: () => void;
   onConsultExpert: () => void;
   onRestart: () => void;
 }
 
 export default function ResultScreen({
   judgement,
+  savedResult,
+  onSaveResult,
   onConsultExpert,
   onRestart,
 }: ResultScreenProps) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   const RESULT_META = {
     safe: {
@@ -103,6 +108,36 @@ export default function ResultScreen({
       <p className="mb-6 rounded-xl bg-neutral-100 p-3 text-sm leading-relaxed text-neutral-500">
         {judgement.result === 'safe' ? t.result.disclaimerSafe : t.result.disclaimerGeneral}
       </p>
+
+      <section className="mb-5 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+        <BigButton
+          variant={savedResult ? 'secondary' : 'outline'}
+          onClick={onSaveResult}
+          disabled={!!savedResult}
+        >
+          {savedResult ? `✓ ${t.result.savedBadge}` : t.result.saveResultButton}
+        </BigButton>
+        {savedResult && (
+          <div className="mt-3 space-y-2 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-neutral-500">{t.result.recordIdLabel}</span>
+              <span className="font-bold text-neutral-900">{savedResult.id}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-neutral-500">{t.result.savedAtLabel}</span>
+              <span className="font-bold text-neutral-900">
+                {formatDateTimeJP(savedResult.savedAt, lang)}
+              </span>
+            </div>
+            <div>
+              <p className="text-neutral-500">{t.result.autoNoteLabel}</p>
+              <p className="mt-1 rounded-lg bg-white p-2 leading-relaxed text-neutral-800">
+                {savedResult.autoNote}
+              </p>
+            </div>
+          </div>
+        )}
+      </section>
 
       {judgement.result !== 'expert_needed' && (
         <section className="mb-2 rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4">

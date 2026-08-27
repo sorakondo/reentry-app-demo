@@ -2,10 +2,13 @@ import { CHECKLIST_QUESTIONS } from '../data/checklist';
 import type { Answer, DangerReasonKey, GasAlarmState, JudgementDetail } from '../types';
 
 /**
+ * 質問文は「危険がある状態そのもの」を尋ねる形式（例:「建物が明らかに傾いていますか？」）。
+ * そのため「はい」＝危険あり、「いいえ」＝危険なし、として判定する。
+ *
  * 判定優先順位:
- * 1位: 危険あり（「いいえ」が1つでもある、またはガス漏れ警報器が警報状態）→ 再入場しない
+ * 1位: 危険あり（「はい」が1つでもある、またはガス漏れ警報器が警報状態）→ 再入場しない
  * 2位: 判断不能（危険は確認されていないが「判断できない」が1つ以上ある）→ 専門家による確認が必要
- * 3位: 問題なし（すべて「はい」かつガス漏れ警報器が正常）→ 再入場可能
+ * 3位: 問題なし（すべて「いいえ」かつガス漏れ警報器が正常）→ 再入場可能
  *
  * 表示用の文言はここでは持たず、キー（質問ID / 'gasAlarm'）のみを返す。
  * 実際の文言は i18n/translations.ts から選択言語に応じて解決する。
@@ -23,7 +26,7 @@ export function judge(
 
   for (const q of CHECKLIST_QUESTIONS) {
     const a = answers.find((x) => x.questionId === q.id);
-    if (a?.value === 'no') {
+    if (a?.value === 'yes') {
       dangerReasonKeys.push(q.id);
     }
   }
