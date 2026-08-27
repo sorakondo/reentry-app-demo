@@ -16,7 +16,7 @@ export default function PhoneFrame({ children }: PhoneFrameProps) {
   return (
     <div className="min-h-dvh w-full bg-neutral-200 sm:flex sm:items-center sm:justify-center sm:py-6">
       <div
-        className="relative mx-auto flex min-h-dvh w-full flex-col bg-white sm:min-h-[calc(100dvh-3rem)] sm:max-w-[430px] sm:rounded-[2.5rem] sm:border-8 sm:border-neutral-900 sm:shadow-2xl"
+        className="relative mx-auto flex min-h-dvh w-full flex-col bg-white sm:h-[calc(100dvh-3rem)] sm:min-h-0 sm:max-w-[430px] sm:overflow-y-auto sm:rounded-[2.5rem] sm:border-8 sm:border-neutral-900 sm:shadow-2xl"
         style={{
           // 実機でのノッチ等の安全領域に配慮
           paddingTop: 'env(safe-area-inset-top)',
