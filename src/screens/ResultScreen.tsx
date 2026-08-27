@@ -159,9 +159,16 @@ export default function ResultScreen({
       </p>
 
       <section className="mb-5 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-        <BigButton variant={savedResult ? 'secondary' : 'outline'} onClick={onSaveResult} disabled={!!savedResult}>
+        <BigButton
+          variant={savedResult ? 'secondary' : 'outline'}
+          onClick={onSaveResult}
+          disabled={!!savedResult || !signature.signed}
+        >
           {savedResult ? `✓ ${t.result.savedBadge}` : t.result.saveResultButton}
         </BigButton>
+        {!savedResult && !signature.signed && (
+          <p className="mt-2 text-xs text-neutral-500">{t.result.saveRequiresSignatureNote}</p>
+        )}
         {savedResult && (
           <div className="mt-3 space-y-2 text-sm">
             <div className="flex items-center justify-between"><span className="text-neutral-500">{t.result.recordIdLabel}</span><span className="font-bold text-neutral-900">{savedResult.id}</span></div>

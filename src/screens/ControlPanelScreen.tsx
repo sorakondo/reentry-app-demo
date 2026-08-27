@@ -75,7 +75,7 @@ export default function ControlPanelScreen({
               onClick={() => onSetGasAlarmStatus('noSignal')}
               className={gasButtonClass(
                 gasAlarmStatus === 'noSignal',
-                'border-orange-400 bg-orange-50 text-orange-700',
+                'border-orange-600 bg-orange-100 text-orange-800',
               )}
             >
               {t.controlPanel.setNoSignalButton}

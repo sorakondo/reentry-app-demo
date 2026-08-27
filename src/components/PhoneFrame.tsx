@@ -47,7 +47,7 @@ export default function PhoneFrame({ children, gasAlarm, scrollResetKey }: Phone
     noSignal: {
       emoji: '\u{1F7E0}',
       text: t.home.gasAlarmNoSignal,
-      className: 'border-orange-300 bg-orange-50 text-orange-700',
+      className: 'border-orange-600 bg-orange-100 text-orange-800',
     },
   }[gasAlarm.status];
 

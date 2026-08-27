@@ -182,6 +182,7 @@ interface Translation {
     recordIdLabel: string;
     savedAtLabel: string;
     autoNoteLabel: string;
+    saveRequiresSignatureNote: string;
   };
   expertRequest: {
     title: string;
@@ -524,6 +525,7 @@ const ja: Translation = {
     recordIdLabel: '記録ID',
     savedAtLabel: '保存日時',
     autoNoteLabel: '自動整理メモ',
+    saveRequiresSignatureNote: '保存する前に、上の署名欄への署名が必要です。',
   },
   expertRequest: {
     title: '専門家への確認依頼',
@@ -870,6 +872,7 @@ const en: Translation = {
     recordIdLabel: 'Record ID',
     savedAtLabel: 'Saved at',
     autoNoteLabel: 'Auto-summarized memo',
+    saveRequiresSignatureNote: 'Please sign above before saving.',
   },
   expertRequest: {
     title: 'Expert Consultation Request',
