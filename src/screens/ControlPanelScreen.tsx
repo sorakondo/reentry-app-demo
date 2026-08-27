@@ -1,4 +1,4 @@
-import type { AlarmStatus, PriorCheckRecord } from '../types';
+import type { AlarmStatus, PriorCheckRecord, ViewMode } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
 import { DEFAULT_PRIOR_CHECK } from '../data/priorCheck';
 
@@ -7,6 +7,9 @@ interface ControlPanelScreenProps {
   onSetGasAlarmStatus: (status: AlarmStatus) => void;
   priorCheck: PriorCheckRecord | null;
   onSetPriorCheck: (record: PriorCheckRecord | null) => void;
+  // 現在の表示ビューと、その切り替え（スマホのみ／入口のみ／横並び）
+  view: ViewMode;
+  onSetView: (view: ViewMode) => void;
 }
 
 /**
@@ -20,8 +23,17 @@ export default function ControlPanelScreen({
   onSetGasAlarmStatus,
   priorCheck,
   onSetPriorCheck,
+  view,
+  onSetView,
 }: ControlPanelScreenProps) {
   const { t } = useLanguage();
+
+  const layoutLabel = {
+    phone: t.controlPanel.layoutPhoneButton,
+    entrance: t.controlPanel.layoutEntranceButton,
+    both: t.controlPanel.layoutBothButton,
+    control: t.controlPanel.layoutPhoneButton,
+  }[view];
 
   const statusLabel = {
     normal: t.home.gasAlarmNormal,
@@ -113,6 +125,48 @@ export default function ControlPanelScreen({
               )}
             >
               {t.controlPanel.priorCheckOffButton}
+            </button>
+          </div>
+        </section>
+
+        <section className="mt-6 rounded-2xl border border-neutral-200 bg-white p-4">
+          <p className="mb-1 text-sm font-bold text-neutral-500">
+            {t.controlPanel.layoutSectionTitle}
+          </p>
+          <p className="mb-3 text-sm text-neutral-600">
+            {t.controlPanel.layoutCurrentLabel}：
+            <span className="font-bold text-neutral-900">{layoutLabel}</span>
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() => onSetView('phone')}
+              className={gasButtonClass(
+                view === 'phone',
+                'border-blue-400 bg-blue-50 text-blue-700',
+              )}
+            >
+              {t.controlPanel.layoutPhoneButton}
+            </button>
+            <button
+              type="button"
+              onClick={() => onSetView('entrance')}
+              className={gasButtonClass(
+                view === 'entrance',
+                'border-blue-400 bg-blue-50 text-blue-700',
+              )}
+            >
+              {t.controlPanel.layoutEntranceButton}
+            </button>
+            <button
+              type="button"
+              onClick={() => onSetView('both')}
+              className={gasButtonClass(
+                view === 'both',
+                'border-blue-400 bg-blue-50 text-blue-700',
+              )}
+            >
+              {t.controlPanel.layoutBothButton}
             </button>
           </div>
         </section>

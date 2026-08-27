@@ -152,6 +152,7 @@ export interface SelfResponsibilityEntry {
   signatureText: string;
 }
 
-// デモ用の3つの「画面（デバイス）」切り替え
-// phone = スマホ画面 / entrance = 入口ディスプレイ / control = デモ用操作パネル
-export type ViewMode = 'phone' | 'entrance' | 'control';
+// デモ用の「画面（デバイス）」切り替え
+// phone = スマホ画面 / entrance = 入口ディスプレイ / both = スマホと入口を1画面に横並び /
+// control = デモ用操作パネル
+export type ViewMode = 'phone' | 'entrance' | 'both' | 'control';

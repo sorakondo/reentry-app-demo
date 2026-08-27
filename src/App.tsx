@@ -180,8 +180,71 @@ function AppContent() {
   const viewTabs: { id: ViewMode; label: string }[] = [
     { id: 'phone', label: t.viewSwitcher.phoneTab },
     { id: 'entrance', label: t.viewSwitcher.entranceTab },
+    { id: 'both', label: t.viewSwitcher.bothTab },
     { id: 'control', label: t.viewSwitcher.controlTab },
   ];
+
+  // スマホ画面と入口ディスプレイのパネルは「スマホのみ」「入口のみ」「横並び」で
+  // 使い回すため、ここで一度だけ組み立てておく。
+  const phonePanel = (
+    <PhoneFrame
+      gasAlarm={gasAlarm}
+      entranceDisplayState={entranceDisplayState}
+      scrollResetKey={screen}
+    >
+      {screen === 'home' && (
+        <HomeScreen
+          priorCheck={priorCheck}
+          buildingInfo={buildingInfo}
+          onBuildingInfoChange={setBuildingInfo}
+          onStart={handleStart}
+          onSeismicInfoChange={setSeismicInfo}
+          selfEntries={selfEntries}
+          onAddSelfEntry={handleAddSelfEntry}
+          onRemoveSelfEntry={handleRemoveSelfEntry}
+        />
+      )}
+
+      {screen === 'checklist' && (
+        <ChecklistScreen
+          answers={answers}
+          onAnswerChange={handleAnswerChange}
+          onFinish={handleFinishChecklist}
+          onExitToHome={() => setScreen('home')}
+        />
+      )}
+
+      {screen === 'result' && (
+        <ResultScreen
+          judgement={judgement}
+          savedResult={savedResult}
+          onSaveResult={handleSaveResult}
+          onConsultExpert={handleConsultExpert}
+          onRestart={handleRestart}
+        />
+      )}
+
+      {screen === 'expertRequest' && (
+        <ExpertRequestScreen
+          checkedAt={checkedAt}
+          gasAlarm={gasAlarm}
+          seismicInfo={seismicInfo}
+          buildingInfo={buildingInfo}
+          judgement={judgement}
+          onStartCall={handleStartExpertCall}
+          onBack={() => setScreen('result')}
+        />
+      )}
+
+      {screen === 'expertCall' && (
+        <ExpertCallScreen caseNumber={caseNumber} recordId={recordId} onEndCall={handleEndCall} />
+      )}
+
+      {screen === 'expertDecision' && <ExpertDecisionScreen onDecide={handleExpertDecision} />}
+    </PhoneFrame>
+  );
+
+  const entrancePanel = <EntranceDisplayScreen state={entranceDisplayState} />;
 
   return (
     <div className="flex h-dvh w-full flex-col bg-neutral-900">
@@ -204,71 +267,17 @@ function AppContent() {
       </nav>
 
       <div className="min-h-0 flex-1">
-        {view === 'phone' && (
-          <PhoneFrame
-            gasAlarm={gasAlarm}
-            entranceDisplayState={entranceDisplayState}
-            scrollResetKey={screen}
-          >
-            {screen === 'home' && (
-              <HomeScreen
-                priorCheck={priorCheck}
-                buildingInfo={buildingInfo}
-                onBuildingInfoChange={setBuildingInfo}
-                onStart={handleStart}
-                onSeismicInfoChange={setSeismicInfo}
-                selfEntries={selfEntries}
-                onAddSelfEntry={handleAddSelfEntry}
-                onRemoveSelfEntry={handleRemoveSelfEntry}
-              />
-            )}
+        {view === 'phone' && phonePanel}
 
-            {screen === 'checklist' && (
-              <ChecklistScreen
-                answers={answers}
-                onAnswerChange={handleAnswerChange}
-                onFinish={handleFinishChecklist}
-                onExitToHome={() => setScreen('home')}
-              />
-            )}
+        {view === 'entrance' && entrancePanel}
 
-            {screen === 'result' && (
-              <ResultScreen
-                judgement={judgement}
-                savedResult={savedResult}
-                onSaveResult={handleSaveResult}
-                onConsultExpert={handleConsultExpert}
-                onRestart={handleRestart}
-              />
-            )}
-
-            {screen === 'expertRequest' && (
-              <ExpertRequestScreen
-                checkedAt={checkedAt}
-                gasAlarm={gasAlarm}
-                seismicInfo={seismicInfo}
-                buildingInfo={buildingInfo}
-                judgement={judgement}
-                onStartCall={handleStartExpertCall}
-                onBack={() => setScreen('result')}
-              />
-            )}
-
-            {screen === 'expertCall' && (
-              <ExpertCallScreen
-                caseNumber={caseNumber}
-                recordId={recordId}
-                onEndCall={handleEndCall}
-              />
-            )}
-
-            {screen === 'expertDecision' && (
-              <ExpertDecisionScreen onDecide={handleExpertDecision} />
-            )}
-          </PhoneFrame>
+        {/* スマホ画面と入口ディスプレイを画面切り替えなしで横並び（狭い画面では縦積み）に表示 */}
+        {view === 'both' && (
+          <div className="flex h-full w-full flex-col lg:flex-row">
+            <div className="min-h-0 min-w-0 flex-1">{phonePanel}</div>
+            <div className="min-h-0 min-w-0 flex-1">{entrancePanel}</div>
+          </div>
         )}
-
-        {view === 'entrance' && <EntranceDisplayScreen state={entranceDisplayState} />}
 
         {view === 'control' && (
           <ControlPanelScreen
@@ -276,6 +285,8 @@ function AppContent() {
             onSetGasAlarmStatus={setAlarmStatus}
             priorCheck={priorCheck}
             onSetPriorCheck={setPriorCheck}
+            view={view}
+            onSetView={setView}
           />
         )}
       </div>

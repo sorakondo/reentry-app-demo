@@ -123,6 +123,7 @@ interface Translation {
   viewSwitcher: {
     phoneTab: string;
     entranceTab: string;
+    bothTab: string;
     controlTab: string;
   };
   entranceDisplay: {
@@ -152,6 +153,11 @@ interface Translation {
     priorCheckCurrentLabel: string;
     priorCheckOnStatus: string;
     priorCheckOffStatus: string;
+    layoutSectionTitle: string;
+    layoutCurrentLabel: string;
+    layoutPhoneButton: string;
+    layoutEntranceButton: string;
+    layoutBothButton: string;
   };
   checklist: {
     checkLabel: string;
@@ -412,6 +418,7 @@ const ja: Translation = {
   viewSwitcher: {
     phoneTab: '📱 スマホ',
     entranceTab: '🚪 入口',
+    bothTab: '📱🚪 横並び',
     controlTab: '🎛 操作パネル',
   },
   entranceDisplay: {
@@ -440,6 +447,11 @@ const ja: Translation = {
     priorCheckCurrentLabel: '現在の状態',
     priorCheckOnStatus: '確認済み',
     priorCheckOffStatus: '未確認',
+    layoutSectionTitle: '画面レイアウト',
+    layoutCurrentLabel: '現在の表示',
+    layoutPhoneButton: '📱 スマホのみ',
+    layoutEntranceButton: '🚪 入口のみ',
+    layoutBothButton: '📱🚪 横並び',
   },
   checklist: {
     checkLabel: '確認項目',
@@ -776,6 +788,7 @@ const en: Translation = {
   viewSwitcher: {
     phoneTab: '📱 Phone',
     entranceTab: '🚪 Entrance',
+    bothTab: '📱🚪 Side by side',
     controlTab: '🎛 Control Panel',
   },
   entranceDisplay: {
@@ -804,6 +817,11 @@ const en: Translation = {
     priorCheckCurrentLabel: 'Current state',
     priorCheckOnStatus: 'Checked',
     priorCheckOffStatus: 'Not checked',
+    layoutSectionTitle: 'Display Layout',
+    layoutCurrentLabel: 'Current view',
+    layoutPhoneButton: '📱 Phone only',
+    layoutEntranceButton: '🚪 Entrance only',
+    layoutBothButton: '📱🚪 Side by side',
   },
   checklist: {
     checkLabel: 'Check item',
