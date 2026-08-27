@@ -647,7 +647,7 @@ const en: Translation = {
     gasAlarmAlarm: 'Gas Alarm Active',
     gasAlarmNoSignal: 'Not Connected',
     gasAlarmNormalBadge: 'No Alarm',
-    gasAlarmAlarmBadge: 'Alarm Active',
+    gasAlarmAlarmBadge: 'Alarm',
     gasAlarmNoSignalBadge: 'Offline',
     gasAlarmNormalDesc: 'Receiving the latest data from the detector',
     gasAlarmAlarmDesc:
@@ -784,7 +784,7 @@ const en: Translation = {
     deniedTitle: 'Entry Prohibited',
     deniedDesc: 'Re-entry into the building is prohibited. Do not enter.',
     footerNote: 'This is a demo of the sign displayed at the building entrance.',
-    diagnosingBadge: 'Diagnosing',
+    diagnosingBadge: 'Checking',
     allowedBadge: 'Allowed',
     deniedBadge: 'Denied',
   },
