@@ -21,7 +21,10 @@ export default function ChecklistScreen({ answers, onAnswerChange, onFinish, onE
   const selected = current?.value ?? null;
   const comment = current?.comment ?? '';
   const total = questions.length;
-  const isLast = index === total - 1;
+  // 危険度最上位の項目（isCriticalStop）で「はい」が選ばれた場合、
+  // その時点でHOLDが確定するため、残りの項目を確認せずここで終了する。
+  const triggersImmediateHold = !!question.isCriticalStop && selected === 'yes';
+  const isLast = index === total - 1 || triggersImmediateHold;
   const answerOptions: { value: AnswerValue; label: string; hint: string }[] = [
     { value: 'yes', label: t.checklist.answerYes, hint: t.checklist.answerYesHint },
     { value: 'no', label: t.checklist.answerNo, hint: t.checklist.answerNoHint },
@@ -56,13 +59,20 @@ export default function ChecklistScreen({ answers, onAnswerChange, onFinish, onE
       <div className="flex-1">
         <div className="mb-3 flex items-center gap-2 text-xs font-bold text-neutral-400">
           <span>{t.checklist.checkLabel}</span>
-          {question.isGasRelated && (
-            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-700">
+          {question.isCriticalStop && (
+            <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700">
               {t.checklist.importantBadge}
             </span>
           )}
         </div>
-        <h2 className="mb-6 text-2xl font-bold leading-snug text-neutral-900">{t.questions[question.id].text}</h2>
+        <h2
+          className={`text-2xl font-bold leading-snug text-neutral-900 ${question.isCriticalStop ? 'mb-2' : 'mb-6'}`}
+        >
+          {t.questions[question.id].text}
+        </h2>
+        {question.isCriticalStop && (
+          <p className="mb-6 text-sm font-bold text-red-600">{t.checklist.criticalStopNote}</p>
+        )}
 
         <div className="space-y-3">
           {answerOptions.map((option) => {

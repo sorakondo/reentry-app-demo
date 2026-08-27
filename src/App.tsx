@@ -168,7 +168,11 @@ function AppContent() {
 
       <div className="min-h-0 flex-1">
         {view === 'phone' && (
-          <PhoneFrame gasAlarm={gasAlarm} scrollResetKey={screen}>
+          <PhoneFrame
+            gasAlarm={gasAlarm}
+            entranceDisplayState={entranceDisplayState}
+            scrollResetKey={screen}
+          >
             {screen === 'home' && (
               <HomeScreen
                 priorCheck={priorCheck}

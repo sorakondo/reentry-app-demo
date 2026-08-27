@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { GasAlarmState } from '../types';
+import type { EntranceDisplayState, GasAlarmState } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useScaleToFit } from '../hooks/useScaleToFit';
 
@@ -7,6 +7,8 @@ interface PhoneFrameProps {
   children: ReactNode;
   // 左上に常時表示するガス漏れ警報器の状態
   gasAlarm: GasAlarmState;
+  // 左上のガス漏れ警報器の隣に、入口ディスプレイの現在の表示内容を同期して表示する
+  entranceDisplayState: EntranceDisplayState;
   // 画面切り替えのたびに変わる値。スクロール位置を新しい画面の先頭にリセットするために使う。
   scrollResetKey?: string;
 }
@@ -29,7 +31,12 @@ const REF_HEIGHT = 900;
  * スクロール領域は画面（scrollResetKey）が変わるたびに作り直し、
  * 前の画面のスクロール位置を引き継がないようにする。
  */
-export default function PhoneFrame({ children, gasAlarm, scrollResetKey }: PhoneFrameProps) {
+export default function PhoneFrame({
+  children,
+  gasAlarm,
+  entranceDisplayState,
+  scrollResetKey,
+}: PhoneFrameProps) {
   const { t, toggleLang } = useLanguage();
   const { containerRef, scale } = useScaleToFit(REF_WIDTH, REF_HEIGHT);
 
@@ -50,6 +57,25 @@ export default function PhoneFrame({ children, gasAlarm, scrollResetKey }: Phone
       className: 'border-orange-600 bg-orange-100 text-orange-800',
     },
   }[gasAlarm.status];
+
+  // 入口ディスプレイの現在の表示内容と同じ内容を、ガス漏れ警報バッジの隣に同期表示する
+  const entranceMeta = {
+    diagnosing: {
+      emoji: '⏳',
+      text: t.entranceDisplay.diagnosingTitle,
+      className: 'border-neutral-300 bg-neutral-100 text-neutral-600',
+    },
+    allowed: {
+      emoji: '✅',
+      text: t.entranceDisplay.allowedTitle,
+      className: 'border-green-300 bg-green-50 text-green-700',
+    },
+    denied: {
+      emoji: '⛔',
+      text: t.entranceDisplay.deniedTitle,
+      className: 'border-red-300 bg-red-50 text-red-700',
+    },
+  }[entranceDisplayState];
 
   return (
     <div
@@ -74,13 +100,22 @@ export default function PhoneFrame({ children, gasAlarm, scrollResetKey }: Phone
             paddingBottom: 'env(safe-area-inset-bottom)',
           }}
         >
-          <div className="flex shrink-0 items-center justify-between px-4 pt-3">
-            <div
-              className={`flex shrink items-center gap-1 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-bold ${alarmMeta.className}`}
-              aria-label={`${t.home.gasAlarmSectionTitle}: ${alarmMeta.text}`}
-            >
-              <span aria-hidden="true">{alarmMeta.emoji}</span>
-              <span>{alarmMeta.text}</span>
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 px-4 pt-3">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <div
+                className={`flex shrink items-center gap-1 whitespace-nowrap rounded-full border px-2.5 py-1 text-sm font-bold ${alarmMeta.className}`}
+                aria-label={`${t.home.gasAlarmSectionTitle}: ${alarmMeta.text}`}
+              >
+                <span aria-hidden="true">{alarmMeta.emoji}</span>
+                <span>{alarmMeta.text}</span>
+              </div>
+              <div
+                className={`flex shrink items-center gap-1 whitespace-nowrap rounded-full border px-2.5 py-1 text-sm font-bold ${entranceMeta.className}`}
+                aria-label={`${t.viewSwitcher.entranceTab}: ${entranceMeta.text}`}
+              >
+                <span aria-hidden="true">{entranceMeta.emoji}</span>
+                <span>{entranceMeta.text}</span>
+              </div>
             </div>
             <button
               type="button"

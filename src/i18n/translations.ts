@@ -65,6 +65,13 @@ interface Translation {
     statusModerate: string;
     statusCongested: string;
   };
+  startConfirm: {
+    title: string;
+    description: string;
+    confirmButton: string;
+    editButton: string;
+    cancelButton: string;
+  };
   buildingInfo: {
     sectionTitle: string;
     settingsButton: string;
@@ -151,6 +158,7 @@ interface Translation {
     commentLabel: string;
     commentPlaceholder: string;
     commentNote: string;
+    criticalStopNote: string;
     backButton: string;
     nextButton: string;
     finishButton: string;
@@ -183,6 +191,7 @@ interface Translation {
     savedAtLabel: string;
     autoNoteLabel: string;
     saveRequiresSignatureNote: string;
+    endWorkButton: string;
   };
   expertRequest: {
     title: string;
@@ -324,6 +333,14 @@ const ja: Translation = {
     statusModerate: 'やや混雑しています。',
     statusCongested: '混雑しています。接続までお待ちいただく場合があります。',
   },
+  startConfirm: {
+    title: '建物情報の確認',
+    description:
+      '確認作業を始める前に、建物の情報に変更がないかご確認ください。変更がある場合は「情報を変更する」から修正できます。',
+    confirmButton: 'この内容で確認を開始する',
+    editButton: '情報を変更する',
+    cancelButton: 'キャンセル',
+  },
   buildingInfo: {
     sectionTitle: '建物・現場情報',
     settingsButton: '設定',
@@ -418,6 +435,8 @@ const ja: Translation = {
     commentPlaceholder:
       '例：1階の柱にひび割れがあるように見えるが、損傷の程度を判断できない',
     commentNote: '入力内容は専門家への相談内容として使用されます。',
+    criticalStopNote:
+      '「はい」を選択すると、この時点で入場禁止（HOLD）の判定が確定し、確認はここで終了します。',
     backButton: '戻る',
     nextButton: '次へ',
     finishButton: '結果を見る',
@@ -466,12 +485,6 @@ const ja: Translation = {
       shortLabel: '非常階段・出口',
       dangerDescription: '非常階段・出口を利用できない可能性があります',
       unknownBaseText: '非常階段・出口の利用可否を現場で判断できませんでした。',
-    },
-    q8_gas: {
-      text: 'ガス臭や警報など、ガスに関する異常がありますか？',
-      shortLabel: 'ガスの状態',
-      dangerDescription: 'ガス漏れの危険がある可能性があります',
-      unknownBaseText: 'ガスの状態を現場で判断できませんでした。特に慎重な確認が必要です。',
     },
     q9_fire: {
       text: '火災警報・消火設備に異常がありますか？',
@@ -526,6 +539,7 @@ const ja: Translation = {
     savedAtLabel: '保存日時',
     autoNoteLabel: '自動整理メモ',
     saveRequiresSignatureNote: '保存する前に、上の署名欄への署名が必要です。',
+    endWorkButton: '確認作業を終了する',
   },
   expertRequest: {
     title: '専門家への確認依頼',
@@ -671,6 +685,14 @@ const en: Translation = {
     statusModerate: 'Moderately busy right now.',
     statusCongested: 'Busy — you may need to wait to connect.',
   },
+  startConfirm: {
+    title: 'Confirm Building Information',
+    description:
+      'Before starting the check, please confirm the building information is still accurate. Use "Edit Info" if anything has changed.',
+    confirmButton: 'Start Check with This Info',
+    editButton: 'Edit Info',
+    cancelButton: 'Cancel',
+  },
   buildingInfo: {
     sectionTitle: 'Building & Site Info',
     settingsButton: 'Settings',
@@ -765,6 +787,8 @@ const en: Translation = {
     commentPlaceholder:
       'e.g., A crack is visible on a 1st-floor column, but I cannot judge how severe it is.',
     commentNote: 'What you enter here will be used in the consultation message to the expert.',
+    criticalStopNote:
+      'Answering "Yes" immediately confirms an entry-prohibited (HOLD) result and ends the check here.',
     backButton: 'Back',
     nextButton: 'Next',
     finishButton: 'See Result',
@@ -813,12 +837,6 @@ const en: Translation = {
       shortLabel: 'Emergency stairs / exits',
       dangerDescription: 'Emergency stairs or exits may not be usable',
       unknownBaseText: 'Whether emergency stairs or exits are usable could not be judged on site.',
-    },
-    q8_gas: {
-      text: 'Is there a gas-related abnormality, such as an odor or alarm?',
-      shortLabel: 'Gas status',
-      dangerDescription: 'There may be a gas leak hazard',
-      unknownBaseText: 'The gas status could not be judged on site. Extra caution is needed.',
     },
     q9_fire: {
       text: 'Is there an abnormality in the fire alarm or fire-protection systems?',
@@ -873,6 +891,7 @@ const en: Translation = {
     savedAtLabel: 'Saved at',
     autoNoteLabel: 'Auto-summarized memo',
     saveRequiresSignatureNote: 'Please sign above before saving.',
+    endWorkButton: 'End Confirmation Work',
   },
   expertRequest: {
     title: 'Expert Consultation Request',

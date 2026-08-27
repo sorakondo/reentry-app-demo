@@ -187,7 +187,9 @@ export default function ResultScreen({
 
       <div className="mt-auto space-y-3 pt-4">
         {hasExpertAction && <BigButton onClick={onConsultExpert} className="text-lg">{t.result.consultExpertButton}</BigButton>}
-        <BigButton variant="secondary" onClick={onRestart}>{t.result.restartButton}</BigButton>
+        <BigButton variant="secondary" onClick={onRestart}>
+          {hasExpertAction ? t.result.endWorkButton : t.result.restartButton}
+        </BigButton>
       </div>
     </div>
   );

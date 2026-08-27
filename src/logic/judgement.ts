@@ -16,11 +16,11 @@ export function judge(
   const gasAlarmTriggered = gasAlarm.status === 'alarm';
   const holdQuestionIds = new Set([
     'q1_tilt', 'q2_crack', 'q3_adjacent', 'q7_exit',
-    'q8_gas', 'q9_fire', 'q10_elevator', 'q12_missing_data',
+    'q9_fire', 'q10_elevator', 'q12_missing_data',
   ]);
   const expertQuestionIds = new Set([
     'q1_tilt', 'q2_crack', 'q3_adjacent', 'q4_monitoring',
-    'q7_exit', 'q8_gas', 'q9_fire', 'q12_missing_data',
+    'q7_exit', 'q9_fire', 'q12_missing_data',
   ]);
 
   const dangerReasonKeys: DangerReasonKey[] = [];

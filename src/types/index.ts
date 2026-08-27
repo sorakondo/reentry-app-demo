@@ -17,7 +17,6 @@ export type QuestionId =
   | 'q5_ceiling'
   | 'q6_glass'
   | 'q7_exit'
-  | 'q8_gas'
   | 'q9_fire'
   | 'q10_elevator'
   | 'q11_power'
@@ -27,9 +26,11 @@ export type QuestionId =
 export interface ChecklistQuestion {
   id: QuestionId;
   order: number;
-  // ガス・構造など、異常時にHOLDへ直結する項目かどうか
+  // 異常時にHOLDへ直結する項目かどうか
   isCritical?: boolean;
-  isGasRelated?: boolean;
+  // 危険度が最も高く、「はい」の時点で他の項目を確認するまでもなくHOLDが確定するため、
+  // 回答した瞬間にチェックリストを終了させる項目かどうか
+  isCriticalStop?: boolean;
 }
 
 // ガス漏れ警報器の状態（通信なし＝警報器からの通信が途絶えている状態）
