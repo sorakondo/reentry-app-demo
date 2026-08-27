@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Answer, AnswerValue } from '../types';
 import { getDynamicQuestions } from '../data/checklist';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -11,14 +11,10 @@ interface ChecklistScreenProps {
   onExitToHome: () => void;
 }
 
-export default function ChecklistScreen({
-  answers,
-  onAnswerChange,
-  onFinish,
-  onExitToHome,
-}: ChecklistScreenProps) {
+export default function ChecklistScreen({ answers, onAnswerChange, onFinish, onExitToHome }: ChecklistScreenProps) {
   const { t } = useLanguage();
   const [index, setIndex] = useState(0);
+  const topRef = useRef<HTMLDivElement>(null);
   const questions = useMemo(() => getDynamicQuestions(answers), [answers]);
   const question = questions[index];
   const current = answers.find((answer) => answer.questionId === question.id);
@@ -31,6 +27,10 @@ export default function ChecklistScreen({
     { value: 'no', label: t.checklist.answerNo, hint: t.checklist.answerNoHint },
     { value: 'unknown', label: t.checklist.answerUnknown, hint: t.checklist.answerUnknownHint },
   ];
+
+  useEffect(() => {
+    topRef.current?.scrollIntoView({ block: 'start' });
+  }, [index]);
 
   function selectAnswer(value: AnswerValue) {
     onAnswerChange(question.id, value, comment);
@@ -52,7 +52,7 @@ export default function ChecklistScreen({
   }
 
   return (
-    <div className="flex flex-1 flex-col px-5 pb-6 pt-2">
+    <div ref={topRef} className="flex flex-1 flex-col px-5 pb-6 pt-2">
       <div className="flex-1">
         <div className="mb-3 flex items-center gap-2 text-xs font-bold text-neutral-400">
           <span>{t.checklist.checkLabel}</span>
@@ -96,9 +96,7 @@ export default function ChecklistScreen({
 
         {selected === 'unknown' && (
           <div className="mt-4">
-            <label htmlFor="unknown-comment" className="mb-1 block text-sm font-bold text-neutral-500">
-              {t.checklist.commentLabel}
-            </label>
+            <label htmlFor="unknown-comment" className="mb-1 block text-sm font-bold text-neutral-500">{t.checklist.commentLabel}</label>
             <textarea
               id="unknown-comment"
               value={comment}
@@ -113,12 +111,8 @@ export default function ChecklistScreen({
       </div>
 
       <div className="mt-6 flex gap-3">
-        <BigButton variant="secondary" onClick={goBack} className="w-auto flex-1">
-          {t.checklist.backButton}
-        </BigButton>
-        <BigButton onClick={goNext} disabled={!selected} className="flex-[2]">
-          {isLast ? t.checklist.finishButton : t.checklist.nextButton}
-        </BigButton>
+        <BigButton variant="secondary" onClick={goBack} className="w-auto flex-1">{t.checklist.backButton}</BigButton>
+        <BigButton onClick={goNext} disabled={!selected} className="flex-[2]">{isLast ? t.checklist.finishButton : t.checklist.nextButton}</BigButton>
       </div>
     </div>
   );

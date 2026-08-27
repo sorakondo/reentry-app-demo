@@ -1,17 +1,22 @@
 import { useMemo, useState } from 'react';
-import type { Answer, AnswerValue, Screen } from './types';
+import type { Answer, AnswerValue, BuildingInfo, SavedResult, Screen, SeismicInfo } from './types';
 import { CHECKLIST_QUESTIONS, getDynamicQuestions } from './data/checklist';
+import { DEFAULT_BUILDING_INFO } from './data/buildingInfo';
 import { judge } from './logic/judgement';
 import { useGasAlarm } from './logic/useGasAlarm';
-import { generateCaseNumber } from './logic/expertReport';
-import { LanguageProvider } from './i18n/LanguageContext';
+import {
+  buildSavedResultNote,
+  generateCaseNumber,
+  generateRecordId,
+} from './logic/expertReport';
+import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 
 import PhoneFrame from './components/PhoneFrame';
 import HomeScreen from './screens/HomeScreen';
 import ChecklistScreen from './screens/ChecklistScreen';
 import ResultScreen from './screens/ResultScreen';
 import ExpertRequestScreen from './screens/ExpertRequestScreen';
-import ExpertSentScreen from './screens/ExpertSentScreen';
+import ExpertCallScreen from './screens/ExpertCallScreen';
 
 function createInitialAnswers(): Answer[] {
   return CHECKLIST_QUESTIONS.map((q) => ({
@@ -22,10 +27,20 @@ function createInitialAnswers(): Answer[] {
 }
 
 function AppContent() {
+  const { t, lang } = useLanguage();
   const [screen, setScreen] = useState<Screen>('home');
   const [answers, setAnswers] = useState<Answer[]>(createInitialAnswers());
   const [checkedAt, setCheckedAt] = useState<Date>(new Date());
   const [caseNumber, setCaseNumber] = useState<string>('');
+  const [recordId, setRecordId] = useState<string>('');
+  const [savedResult, setSavedResult] = useState<SavedResult | null>(null);
+  const [buildingInfo, setBuildingInfo] = useState<BuildingInfo>(DEFAULT_BUILDING_INFO);
+  const [seismicInfo, setSeismicInfo] = useState<SeismicInfo>({
+    status: 'idle',
+    scale: null,
+    areaName: '',
+    observedAt: null,
+  });
   const { state: gasAlarm, toggleStatus, setNormal } = useGasAlarm();
 
   const judgement = useMemo(
@@ -42,7 +57,6 @@ function AppContent() {
   }
 
   function handleStart() {
-    setAnswers(createInitialAnswers());
     setCheckedAt(new Date());
     setScreen('checklist');
   }
@@ -51,10 +65,14 @@ function AppContent() {
     // デモ用に切り替えたガス漏れ警報器の状態も、次の確認のために「正常」へ戻す
     setNormal();
     setAnswers(createInitialAnswers());
+    setSavedResult(null);
+    setRecordId('');
     setScreen('home');
   }
 
   function handleFinishChecklist() {
+    setRecordId(generateRecordId());
+    setSavedResult(null);
     setScreen('result');
   }
 
@@ -62,16 +80,40 @@ function AppContent() {
     setScreen('expertRequest');
   }
 
-  function handleSendToExpert(_extraComment: string) {
-    // デモのため実際の送信は行わない。追加コメントはこの後の連携先へ渡すことを想定。
+  function handleSaveResult() {
+    setSavedResult({
+      id: recordId || generateRecordId(),
+      result: judgement.result,
+      resultLabel:
+        judgement.result === 'routine'
+          ? t.result.titleRoutine
+          : judgement.result === 'targeted'
+            ? t.result.titleTargeted
+            : judgement.result === 'hold'
+              ? t.result.titleHold
+              : t.result.titleExpert,
+      savedAt: new Date(),
+      autoNote: buildSavedResultNote(judgement, lang),
+    });
+  }
+
+  function handleStartExpertCall(_extraComment: string) {
+    // デモのため実際のビデオ通話は行わない。追加コメントはこの後の連携先へ渡すことを想定。
     setCaseNumber(generateCaseNumber());
-    setScreen('expertSent');
+    setScreen('expertCall');
   }
 
   return (
-    <PhoneFrame>
+    <PhoneFrame scrollResetKey={screen}>
       {screen === 'home' && (
-        <HomeScreen gasAlarm={gasAlarm} onStart={handleStart} onToggleAlarm={toggleStatus} />
+        <HomeScreen
+          gasAlarm={gasAlarm}
+          buildingInfo={buildingInfo}
+          onBuildingInfoChange={setBuildingInfo}
+          onStart={handleStart}
+          onToggleAlarm={toggleStatus}
+          onSeismicInfoChange={setSeismicInfo}
+        />
       )}
 
       {screen === 'checklist' && (
@@ -86,6 +128,8 @@ function AppContent() {
       {screen === 'result' && (
         <ResultScreen
           judgement={judgement}
+          savedResult={savedResult}
+          onSaveResult={handleSaveResult}
           onConsultExpert={handleConsultExpert}
           onRestart={handleRestart}
         />
@@ -95,14 +139,20 @@ function AppContent() {
         <ExpertRequestScreen
           checkedAt={checkedAt}
           gasAlarm={gasAlarm}
+          seismicInfo={seismicInfo}
+          buildingInfo={buildingInfo}
           judgement={judgement}
-          onSend={handleSendToExpert}
+          onStartCall={handleStartExpertCall}
           onBack={() => setScreen('result')}
         />
       )}
 
-      {screen === 'expertSent' && (
-        <ExpertSentScreen caseNumber={caseNumber} onBackToHome={handleRestart} />
+      {screen === 'expertCall' && (
+        <ExpertCallScreen
+          caseNumber={caseNumber}
+          recordId={recordId}
+          onEndCall={handleRestart}
+        />
       )}
     </PhoneFrame>
   );

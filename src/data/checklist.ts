@@ -28,23 +28,16 @@ function hasConcern(answers: Answer[], questionId: QuestionId) {
   return value === 'no' || value === 'unknown';
 }
 
-/**
- * 回答済みの内容から、次に必要な確認項目だけを返す。
- * 未回答の設問は前提条件が満たされた時点で初めて列に追加される。
- */
+/** 回答内容に応じて、次に必要な確認項目だけを返す。 */
 export function getDynamicQuestions(answers: Answer[]): ChecklistQuestion[] {
   const ids: QuestionId[] = ['q1_tilt'];
 
-  if (answerValue(answers, 'q1_tilt')) {
-    ids.push('q2_crack');
-  }
+  if (answerValue(answers, 'q1_tilt')) ids.push('q2_crack');
   if (answerValue(answers, 'q2_crack')) {
     if (hasConcern(answers, 'q1_tilt') || hasConcern(answers, 'q2_crack')) ids.push('q3_adjacent');
     ids.push('q4_monitoring');
   }
-  if (answerValue(answers, 'q4_monitoring')) {
-    ids.push('q7_exit');
-  }
+  if (answerValue(answers, 'q4_monitoring')) ids.push('q7_exit');
   if (answerValue(answers, 'q7_exit')) {
     if (hasConcern(answers, 'q7_exit')) {
       ids.push('q10_elevator');
@@ -52,13 +45,9 @@ export function getDynamicQuestions(answers: Answer[]): ChecklistQuestion[] {
     }
     ids.push('q8_gas');
   }
-  if (answerValue(answers, 'q8_gas')) {
-    ids.push('q9_fire');
-  }
+  if (answerValue(answers, 'q8_gas')) ids.push('q9_fire');
   if (answerValue(answers, 'q9_fire')) {
-    if (hasConcern(answers, 'q9_fire')) {
-      ids.push('q5_ceiling', 'q6_glass');
-    }
+    if (hasConcern(answers, 'q9_fire')) ids.push('q5_ceiling', 'q6_glass');
     ids.push('q12_missing_data');
   }
 

@@ -1,4 +1,4 @@
-import type { Lang, QuestionId } from '../types';
+import type { Lang, QuestionId, StructureType } from '../types';
 
 interface QuestionText {
   text: string;
@@ -36,8 +36,54 @@ interface Translation {
     relativeSecondsAgo: (n: number) => string;
     relativeMinutesAgo: (n: number) => string;
   };
+  seismic: {
+    sectionTitle: string;
+    scaleLabel: (scale: number | null) => string;
+    statusLoading: string;
+    statusAutoObservedAt: string;
+    statusNoData: string;
+    statusFailed: string;
+    sourceAutoBadge: string;
+    sourceManualBadge: string;
+    areaUnknown: string;
+    retryButton: string;
+    manualToggleOn: string;
+    manualToggleOff: string;
+    manualScaleLabel: string;
+    manualAreaLabel: string;
+    manualAreaPlaceholder: string;
+    manualNotSet: string;
+  };
+  expertCapacity: {
+    sectionTitle: string;
+    unitSeparator: string;
+    description: string;
+    statusAvailable: string;
+    statusModerate: string;
+    statusCongested: string;
+  };
+  buildingInfo: {
+    sectionTitle: string;
+    settingsButton: string;
+    modalTitle: string;
+    modalDesc: string;
+    ageLabel: string;
+    ageUnit: string;
+    locationLabel: string;
+    locationPlaceholder: string;
+    floorsLabel: string;
+    floorsUnit: string;
+    structureTypeLabel: string;
+    structureTypeOptions: Record<StructureType, string>;
+    floorAreaLabel: string;
+    floorAreaUnit: string;
+    notSet: string;
+    saveButton: string;
+    cancelButton: string;
+  };
   checklist: {
     checkLabel: string;
+    progress: (index: number, total: number) => string;
     importantBadge: string;
     answerYes: string;
     answerYesHint: string;
@@ -74,6 +120,11 @@ interface Translation {
     restartButton: string;
     askExpertPrompt: string;
     askExpertButton: string;
+    saveResultButton: string;
+    savedBadge: string;
+    recordIdLabel: string;
+    savedAtLabel: string;
+    autoNoteLabel: string;
   };
   expertRequest: {
     title: string;
@@ -81,6 +132,7 @@ interface Translation {
     buildingNameLabel: string;
     checkedAtLabel: string;
     gasAlarmLabel: string;
+    seismicLabel: string;
     fieldResultSectionTitle: string;
     noUnknownItemsText: string;
     unknownSuffix: string;
@@ -91,16 +143,40 @@ interface Translation {
     overallSummaryNoUnknown: string;
     extraCommentLabel: string;
     extraCommentPlaceholder: string;
-    sendButton: string;
-    sendingButton: string;
+    callButton: string;
+    connectingButton: string;
     backButton: string;
   };
-  expertSent: {
+  expertCall: {
+    liveBadge: string;
     title: string;
-    desc: string;
-    caseNumberLabel: string;
+    expertLabel: string;
+    expertRole: string;
+    selfLabel: string;
+    waitingNote: string;
+    callIdLabel: string;
+    buildingLabel: string;
     demoNote: string;
-    backHomeButton: string;
+    endCallButton: string;
+    photoSectionTitle: string;
+    photoSectionDesc: string;
+    selectPhotoButton: string;
+    photoSending: string;
+    photoSent: string;
+    photoRemoveLabel: string;
+    photoDemoNote: string;
+    recordIdLabel: string;
+    signatureSectionTitle: string;
+    signatureSectionDesc: string;
+    signButton: string;
+    signedStatus: string;
+    unsignedStatus: string;
+    signedAtLabel: string;
+    signatureModalTitle: string;
+    signaturePlaceholder: string;
+    clearButton: string;
+    completeSignButton: string;
+    cancelButton: string;
   };
 }
 
@@ -135,13 +211,80 @@ const ja: Translation = {
     relativeSecondsAgo: (n) => `${n}秒前`,
     relativeMinutesAgo: (n) => `${n}分前`,
   },
+  seismic: {
+    sectionTitle: '周辺の震度情報',
+    scaleLabel: (scale) => {
+      const labels: Record<number, string> = {
+        0: '震度0',
+        10: '震度1',
+        20: '震度2',
+        30: '震度3',
+        40: '震度4',
+        45: '震度5弱',
+        46: '震度5弱以上（未確定）',
+        50: '震度5強',
+        55: '震度6弱',
+        60: '震度6強',
+        70: '震度7',
+      };
+      if (scale === null) return '不明';
+      return labels[scale] ?? '不明';
+    },
+    statusLoading: '位置情報から震度情報を取得しています…',
+    statusAutoObservedAt: '取得日時',
+    statusNoData: '直近の震度情報の報告はありません',
+    statusFailed: '震度情報を自動取得できませんでした。手動で入力してください。',
+    sourceAutoBadge: '自動取得',
+    sourceManualBadge: '手動入力',
+    areaUnknown: '地域不明',
+    retryButton: '自動取得をやり直す',
+    manualToggleOn: '手動で入力する',
+    manualToggleOff: '自動取得に戻す',
+    manualScaleLabel: '震度',
+    manualAreaLabel: '地域名（任意）',
+    manualAreaPlaceholder: '例：○○市○○区',
+    manualNotSet: '未入力',
+  },
+  expertCapacity: {
+    sectionTitle: '専門家テレビ電話 対応状況',
+    unitSeparator: '/',
+    description: '現在対応中の相談件数です',
+    statusAvailable: '空きがあります。すぐに接続できます。',
+    statusModerate: 'やや混雑しています。',
+    statusCongested: '混雑しています。接続までお待ちいただく場合があります。',
+  },
+  buildingInfo: {
+    sectionTitle: '建物・現場情報',
+    settingsButton: '設定',
+    modalTitle: '建物情報の設定',
+    modalDesc: '建物の基本情報を入力してください（デモ用にあらかじめ入力されています）。',
+    ageLabel: '築年数',
+    ageUnit: '年',
+    locationLabel: '所在地',
+    locationPlaceholder: '例：東京都千代田区丸の内1-1-1',
+    floorsLabel: '階数',
+    floorsUnit: '階建て',
+    structureTypeLabel: '構造種別',
+    structureTypeOptions: {
+      RC: 'RC造（鉄筋コンクリート造）',
+      S: 'S造（鉄骨造）',
+      wood: '木造',
+      other: 'その他',
+    },
+    floorAreaLabel: '延床面積',
+    floorAreaUnit: 'm²',
+    notSet: '未設定',
+    saveButton: '保存する',
+    cancelButton: 'キャンセル',
+  },
   checklist: {
     checkLabel: '確認項目',
+    progress: (index, total) => `${index} / ${total}`,
     importantBadge: '重要項目',
     answerYes: 'はい',
-    answerYesHint: '危険なし',
+    answerYesHint: '危険あり',
     answerNo: 'いいえ',
-    answerNoHint: '危険あり',
+    answerNoHint: '危険なし',
     answerUnknown: '判断できない',
     answerUnknownHint: '現場では確認できない',
     commentLabel: '状況を入力してください（任意）',
@@ -154,14 +297,14 @@ const ja: Translation = {
   },
   questions: {
     q1_tilt: {
-      text: '建物が明らかに傾いていませんか？',
+      text: '建物に明らかな傾き・沈下がありませんか？',
       shortLabel: '建物の傾き',
       dangerDescription: '建物の傾きなど、外観上の異常がある可能性があります',
       unknownBaseText:
         '建物の傾きについて、外観からの確認だけでは現場で安全性を判断できませんでした。',
     },
     q2_crack: {
-      text: '柱や梁に大きなひび割れ・損傷がありませんか？',
+      text: '主要構造部に重大なひび割れ・損傷がありませんか？',
       shortLabel: '柱・梁の損傷',
       dangerDescription: '柱・梁に危険がある可能性があります',
       unknownBaseText:
@@ -250,14 +393,20 @@ const ja: Translation = {
     restartButton: '最初からやり直す',
     askExpertPrompt: '判断に迷う場合や不安な点がある場合は、専門家に相談することもできます。',
     askExpertButton: '専門家に相談する',
+    saveResultButton: '確認結果をアプリに保存',
+    savedBadge: '保存済み',
+    recordIdLabel: '記録ID',
+    savedAtLabel: '保存日時',
+    autoNoteLabel: '自動整理メモ',
   },
   expertRequest: {
     title: '専門家への確認依頼',
     subtitle:
-      '入力内容をもとに、相談内容を自動的に整理しました。内容を確認して送信してください。',
+      '入力内容をもとに、相談内容を自動的に整理しました。内容を確認のうえ、専門家とのビデオ通話を開始してください。',
     buildingNameLabel: '建物名',
     checkedAtLabel: '確認日時',
     gasAlarmLabel: 'ガス漏れ警報器',
+    seismicLabel: '周辺の震度',
     fieldResultSectionTitle: '現場確認結果',
     noUnknownItemsText: '現場で判断できなかった項目はありません。',
     unknownSuffix: '：判断できない',
@@ -268,18 +417,42 @@ const ja: Translation = {
       `現場確認の結果、${unknownCount}件の項目について、現場の担当者だけでは安全性を判断できませんでした。恐れ入りますが、下記の内容をご確認のうえ、再入場の可否についてご判断をお願いいたします。`,
     overallSummaryNoUnknown:
       '現場確認では判断できなかった項目はありませんでしたが、現場の担当者が判断に迷う点があるため、念のため専門家のご確認をお願いいたします。',
-    extraCommentLabel: '追加で伝えたいこと（任意）',
+    extraCommentLabel: '通話で伝えたいこと（任意）',
     extraCommentPlaceholder: '例：結果は「再入場可能」だったが、念のため確認してほしい',
-    sendButton: '専門家へ送信',
-    sendingButton: '送信中…',
+    callButton: '専門家とビデオ通話をつなぐ',
+    connectingButton: '接続中…',
     backButton: '結果画面に戻る',
   },
-  expertSent: {
-    title: '専門家への確認依頼を送信しました',
-    desc: '専門家からの確認結果をお待ちください。現場での判断が難しい場合は、無理をせず建物には立ち入らないでください。',
-    caseNumberLabel: '受付番号',
-    demoNote: 'これは研究発表用のデモです。実際に専門家へ送信・通信は行われていません。',
-    backHomeButton: 'ホームに戻る',
+  expertCall: {
+    liveBadge: '通話中',
+    title: '専門家とビデオ通話中',
+    expertLabel: '専門家',
+    expertRole: '建物構造の専門家（オンライン）',
+    selfLabel: 'あなた（現場）',
+    waitingNote: '専門家が状況を確認しています。現在の状況を落ち着いてお伝えください。',
+    callIdLabel: '通話ID',
+    buildingLabel: '建物名',
+    demoNote: 'これは研究発表用のデモです。実際のビデオ通話は行われていません。',
+    endCallButton: '通話を終了してホームに戻る',
+    photoSectionTitle: '専門家へ写真を送る',
+    photoSectionDesc: '現場の状況が伝わる写真があれば、通話中に専門家へ送ることができます。',
+    selectPhotoButton: '写真を選択して送る',
+    photoSending: '送信中…',
+    photoSent: '送信済み',
+    photoRemoveLabel: '写真を削除',
+    photoDemoNote: 'これはデモのため、実際には専門家へ送信されません。',
+    recordIdLabel: '記録ID',
+    signatureSectionTitle: '確認完了の署名',
+    signatureSectionDesc: '確認が完了したら、下記に署名してください。',
+    signButton: '署名する',
+    signedStatus: '署名済み',
+    unsignedStatus: '未署名',
+    signedAtLabel: '署名日時',
+    signatureModalTitle: '署名',
+    signaturePlaceholder: '枠内に指またはマウスで署名してください',
+    clearButton: 'クリア',
+    completeSignButton: '署名して完了',
+    cancelButton: 'キャンセル',
   },
 };
 
@@ -315,13 +488,80 @@ const en: Translation = {
     relativeSecondsAgo: (n) => `${n}s ago`,
     relativeMinutesAgo: (n) => `${n}m ago`,
   },
+  seismic: {
+    sectionTitle: 'Nearby Seismic Intensity',
+    scaleLabel: (scale) => {
+      const labels: Record<number, string> = {
+        0: 'Intensity 0',
+        10: 'Intensity 1',
+        20: 'Intensity 2',
+        30: 'Intensity 3',
+        40: 'Intensity 4',
+        45: 'Intensity 5 Lower',
+        46: 'Intensity 5+ (unconfirmed)',
+        50: 'Intensity 5 Upper',
+        55: 'Intensity 6 Lower',
+        60: 'Intensity 6 Upper',
+        70: 'Intensity 7',
+      };
+      if (scale === null) return 'Unknown';
+      return labels[scale] ?? 'Unknown';
+    },
+    statusLoading: 'Fetching seismic intensity from your location…',
+    statusAutoObservedAt: 'Retrieved at',
+    statusNoData: 'No recent seismic intensity reports nearby',
+    statusFailed: 'Could not automatically retrieve seismic data. Please enter it manually.',
+    sourceAutoBadge: 'Auto',
+    sourceManualBadge: 'Manual',
+    areaUnknown: 'Unknown area',
+    retryButton: 'Retry automatic detection',
+    manualToggleOn: 'Enter manually',
+    manualToggleOff: 'Use automatic detection',
+    manualScaleLabel: 'Seismic intensity',
+    manualAreaLabel: 'Area name (optional)',
+    manualAreaPlaceholder: 'e.g., City / Ward name',
+    manualNotSet: 'Not set',
+  },
+  expertCapacity: {
+    sectionTitle: 'Expert Video Call Availability',
+    unitSeparator: '/',
+    description: 'Consultations currently in progress',
+    statusAvailable: 'Available — you can connect right away.',
+    statusModerate: 'Moderately busy right now.',
+    statusCongested: 'Busy — you may need to wait to connect.',
+  },
+  buildingInfo: {
+    sectionTitle: 'Building & Site Info',
+    settingsButton: 'Settings',
+    modalTitle: 'Building Information Settings',
+    modalDesc: "Enter the building's basic information (pre-filled for this demo).",
+    ageLabel: 'Building age',
+    ageUnit: 'yr',
+    locationLabel: 'Location',
+    locationPlaceholder: 'e.g., 1-1-1 Marunouchi, Chiyoda-ku, Tokyo',
+    floorsLabel: 'Floors',
+    floorsUnit: 'floors',
+    structureTypeLabel: 'Structure type',
+    structureTypeOptions: {
+      RC: 'RC (Reinforced Concrete)',
+      S: 'S (Steel)',
+      wood: 'Wood',
+      other: 'Other',
+    },
+    floorAreaLabel: 'Total floor area',
+    floorAreaUnit: 'm²',
+    notSet: 'Not set',
+    saveButton: 'Save',
+    cancelButton: 'Cancel',
+  },
   checklist: {
     checkLabel: 'Check item',
+    progress: (index, total) => `${index} / ${total}`,
     importantBadge: 'Important',
     answerYes: 'Yes',
-    answerYesHint: 'No danger',
+    answerYesHint: 'Danger present',
     answerNo: 'No',
-    answerNoHint: 'Danger present',
+    answerNoHint: 'No danger',
     answerUnknown: "Can't tell",
     answerUnknownHint: 'Cannot confirm on site',
     commentLabel: 'Describe the situation (optional)',
@@ -334,14 +574,14 @@ const en: Translation = {
   },
   questions: {
     q1_tilt: {
-      text: 'Is the building clearly NOT tilting?',
+      text: 'Is the building clearly NOT tilting or settling?',
       shortLabel: 'Building tilt',
       dangerDescription: 'There may be a visible abnormality such as a building tilt',
       unknownBaseText:
         'Whether the building is tilting could not be judged on site from a visual check alone.',
     },
     q2_crack: {
-      text: 'Are there NO major cracks or damage to columns or beams?',
+      text: 'Are there NO major cracks or damage to primary structural members?',
       shortLabel: 'Column / beam damage',
       dangerDescription: 'There may be danger from damaged columns or beams',
       unknownBaseText:
@@ -430,14 +670,20 @@ const en: Translation = {
     restartButton: 'Start Over',
     askExpertPrompt: "If you're unsure or feel uneasy about this result, you can also consult an expert.",
     askExpertButton: 'Consult an expert',
+    saveResultButton: 'Save Confirmation Result to App',
+    savedBadge: 'Saved',
+    recordIdLabel: 'Record ID',
+    savedAtLabel: 'Saved at',
+    autoNoteLabel: 'Auto-summarized memo',
   },
   expertRequest: {
     title: 'Expert Consultation Request',
     subtitle:
-      'The consultation message below was organized automatically from your answers. Please review it before sending.',
+      'The consultation message below was organized automatically from your answers. Please review it, then start a video call with an expert.',
     buildingNameLabel: 'Building',
     checkedAtLabel: 'Checked at',
     gasAlarmLabel: 'Gas leak detector',
+    seismicLabel: 'Nearby seismic intensity',
     fieldResultSectionTitle: 'On-site check results',
     noUnknownItemsText: 'No items were left unable to be judged on site.',
     unknownSuffix: ": Can't tell",
@@ -448,20 +694,45 @@ const en: Translation = {
       `On-site staff were unable to judge the safety of ${unknownCount} item(s) during this check. Please review the details below and advise on whether re-entry is appropriate.`,
     overallSummaryNoUnknown:
       'No items were left unable to be judged during the on-site check, but the on-site staff would still like an expert to review the result, just to be safe.',
-    extraCommentLabel: 'Additional notes (optional)',
+    extraCommentLabel: 'Anything you want to mention on the call (optional)',
     extraCommentPlaceholder:
       'e.g., The result was "Re-Entry Allowed", but I would still like it double-checked.',
-    sendButton: 'Send to Expert',
-    sendingButton: 'Sending…',
+    callButton: 'Start Video Call with Expert',
+    connectingButton: 'Connecting…',
     backButton: 'Back to results',
   },
-  expertSent: {
-    title: 'Your request has been sent to an expert',
-    desc: 'Please wait for the expert to respond. If it is hard to judge on site, do not force entry into the building.',
-    caseNumberLabel: 'Reference number',
+  expertCall: {
+    liveBadge: 'Live',
+    title: 'Video Call with Expert',
+    expertLabel: 'Expert',
+    expertRole: 'Structural safety expert (online)',
+    selfLabel: 'You (on site)',
+    waitingNote: 'The expert is reviewing the situation. Please describe the current state calmly.',
+    callIdLabel: 'Call ID',
+    buildingLabel: 'Building',
     demoNote:
-      'This is a demo for a research presentation. No request was actually sent to an expert.',
-    backHomeButton: 'Back to Home',
+      'This is a demo for a research presentation. No actual video call is taking place.',
+    endCallButton: 'End call and return home',
+    photoSectionTitle: 'Send Photos to the Expert',
+    photoSectionDesc:
+      'If you have photos that show the situation on site, you can send them to the expert during the call.',
+    selectPhotoButton: 'Select & Send Photo',
+    photoSending: 'Sending…',
+    photoSent: 'Sent',
+    photoRemoveLabel: 'Remove photo',
+    photoDemoNote: 'This is a demo — photos are not actually sent to the expert.',
+    recordIdLabel: 'Record ID',
+    signatureSectionTitle: 'Completion Signature',
+    signatureSectionDesc: 'Once the confirmation is complete, please sign below.',
+    signButton: 'Sign',
+    signedStatus: 'Signed',
+    unsignedStatus: 'Not signed',
+    signedAtLabel: 'Signed at',
+    signatureModalTitle: 'Signature',
+    signaturePlaceholder: 'Sign within the box using your finger or mouse',
+    clearButton: 'Clear',
+    completeSignButton: 'Sign & Complete',
+    cancelButton: 'Cancel',
   },
 };
 
