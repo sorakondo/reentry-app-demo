@@ -322,14 +322,13 @@ export default function HomeScreen({
         </div>
       </section>
 
-      <p className="mb-3 rounded-xl bg-neutral-100 p-3 text-sm leading-relaxed text-neutral-500">
-        {t.home.disclaimer}
-      </p>
-
       <div className="mt-auto pt-3">
         <BigButton onClick={() => setShowStartModal(true)} className="text-xl">
           {t.home.startButton}
         </BigButton>
+        <p className="mt-2 text-center text-[10px] leading-snug text-neutral-400">
+          {t.home.disclaimer}
+        </p>
       </div>
 
       {showStartModal && (
