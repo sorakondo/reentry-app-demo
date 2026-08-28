@@ -113,9 +113,12 @@ export default function HomeScreen({
   return (
     <div className="flex flex-1 flex-col px-5 pb-4 pt-1">
       <header className="mb-4 flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold leading-tight text-neutral-900">
-          {t.home.appTitle}
-        </h1>
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold leading-tight text-neutral-900">
+            {t.home.appTitle}
+          </h1>
+          <p className="mt-0.5 text-xs font-medium text-neutral-500">{t.home.appSubtitle}</p>
+        </div>
         <button
           type="button"
           onClick={() => setShowSettingsModal(true)}

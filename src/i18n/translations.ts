@@ -283,8 +283,8 @@ const ja: Translation = {
     buildingName: '○○ビル',
   },
   home: {
-    appTitle: '建物再入場確認',
-    appSubtitle: '建物の安全状態を確認します',
+    appTitle: 'Re:Turn',
+    appSubtitle: '災害後 建物再入場確認',
     buildingNameLabel: '建物名',
     checkedAtLabel: '確認日時',
     gasAlarmSectionTitle: 'ガス漏れ警報器',
@@ -652,8 +652,8 @@ const en: Translation = {
     buildingName: 'Building A',
   },
   home: {
-    appTitle: 'Post-Disaster Re-Entry Check',
-    appSubtitle: "Check the building's safety status",
+    appTitle: 'Re:Turn',
+    appSubtitle: 'Post-Disaster Re-Entry Check',
     buildingNameLabel: 'Building',
     checkedAtLabel: 'Checked at',
     gasAlarmSectionTitle: 'Gas Leak Detector',
