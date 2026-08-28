@@ -81,9 +81,9 @@ export default function StartCheckModal({
                 : t.buildingInfo.notSet}
             </dd>
           </div>
-          <div className="flex items-center justify-between">
-            <dt className="text-neutral-500">{t.buildingInfo.structureTypeLabel}</dt>
-            <dd className="font-bold text-neutral-900">
+          <div className="flex items-center justify-between gap-3">
+            <dt className="shrink-0 text-neutral-500">{t.buildingInfo.structureTypeLabel}</dt>
+            <dd className="text-right font-bold text-neutral-900">
               {buildingInfo.structureType
                 ? t.buildingInfo.structureTypeOptions[buildingInfo.structureType]
                 : t.buildingInfo.notSet}
